@@ -1,6 +1,6 @@
 # Stack Smashing
 
-Project under [Dr. Bhargav Bellur] at PES Institute of Technology.
+Project under [Dr. Bhargav Bellur].
 
 Project report (or if you just want to know more about the project) can be found at [torcellite.com].
 
