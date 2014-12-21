@@ -1,7 +1,10 @@
 global _start
 
+section .text
+
 _start:
-	mov eax, 0x3c
-	syscall
-	mov eax, 0xe7
+	xor rax, rax
+	mov al,  0x3c
+	xor rdi, rdi
+	mov dil, 0x0a
 	syscall

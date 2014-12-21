@@ -1,27 +1,34 @@
-global _start
+global _start            ; global entry point export for ld
 
 section .text
 
-    _start:
-	jmp MESSAGE ;
-	
-    GOBACK:
-        
-	mov eax, 0x4
-	mov ebx, 0x1
-	pop rcx
-	push 0x1
-	pop rax
-	mov rdi, rax
-        syscall	
+_start:
+    jmp message
 
-        ; exit from the application here
-        xor     rdi,rdi
-        push    0x3c
-        pop     rax
-        syscall
-   MESSAGE:
-	call GOBACK
-	db "Hello, World!", 0dh, 0ah
+mystart:
+
+    ; sys_write(stdout, message, length)
+    ; xor registers to clear them and then push the values only to the lowest bits to avoid nulls
+    xor   rax, rax
+    mov   al, 0x1           ; sys_write
+    xor   rdi, rdi          
+    mov   dil, 0x1	    ; stdout
+    pop   rsi               ; message address
+    xor   rdx, rdx
+    mov   dl, 0xf           ; message string length
+    syscall
+
+    ; sys_exit(return_code)
+  
+    xor   rax, rax
+    mov   al, 0x3c          ; sys_exit
+    xor   rdi, rdi
+    mov   dil, 0x0a         ; return 10 (success)
+    syscall
+
+message: 
+
+    call mystart 		   ; push the address of the string onto the stack
+    db 'Hello, world!',0dh,0ah     ; message and CR, LF
 
 section .data
