@@ -4,13 +4,13 @@ Project under [Dr. Bhargav Bellur].
 
 Project report (or if you just want to know more about the project) can be found at [torcellite.com].
 
-To use the helper function "gethexcode.java" compile like a regular java program and feed the output of `objdump` as a command-line argument.
+To use the helper function "getshellcode.java" compile like a regular java program and feed the output of `objdump` as a command-line argument.
 
-`javac gethexcode.java -d ../bin`
+`javac getshellcode.java -d ../bin`
 
 `cd bin`
 
-`java gethexcode "$(objdump -d hello.out)"`
+`java getshellcode "$(objdump -d hello.out)"`
 
 # Screenshot
 
