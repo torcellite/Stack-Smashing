@@ -1,3 +1,8 @@
 #Ignore papers and books placed here
 material
+
+#Ignore executables
 bin
+
+#Ignore backup files created by editors
+*~

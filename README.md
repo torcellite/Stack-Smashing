@@ -1,21 +1,25 @@
-# Stack Smashing
-
-Project under [Dr. Bhargav Bellur].
-
-Project report (or if you just want to know more about the project) can be found at [torcellite.com].
-
-To use the helper function "getshellcode.java" compile like a regular java program and feed the output of `objdump` as a command-line argument.
-
-`javac getshellcode.java -d ../bin`
-
-`cd bin`
-
-`java getshellcode "$(objdump -d hello.out)"`
-
+Stack Smashing
+==============
+Project under [Dr. Bhargav Bellur][1]. The project report can be found [here][2].
+# Setup
+1. Clone the repository into a folder of your choice. You can use either SSH or HTTPS. 
+        https://github.com/torcellite/Stack-Smashing.git
+2. Run the setup.sh file to create executable files in the `/bin` folder
+        cd Stack-Smashing # Or whichever folder you've cloned the project into
+        ./setup.sh
+3. Run any of the executables to examine the output. To run the "generic stack smasher" with all protections disabled run the `shellcodetest` executable.
+        bin/shellcodetest
+4. To create your own program to smash stacks, go through the example problems and check out the project report. You can use `getshellcode.java` to extract the hex values to be used as shellcode.
+        cd bin
+        java getshellcode "$(objdump -d shell.out)"
+where `shell.out` is the executable for spawning a shell, created from `shell.asm`.
+5. After you're done restore ASLR by executing `reset.sh`.
+        ./reset.sh
 # Screenshot
 
-![screenshot](screenshots/screenshot_helper_function.png)
+![screenshot1](screenshots/screenshot1.png)
+![screenshot2](screenshots/screenshot2.png)
+![screenshot3](screenshots/screenshot3.png)
 
-
-[torcellite.com]:http://torcellite.com/projects/stack-smashing.html
-[Dr. Bhargav Bellur]:http://pes.edu/faculty/bhargav-bellur
+[1]:http://pes.edu/faculty/bhargav-bellur
+[2]:http://torcellite.com/projects/stack-smashing.html

