@@ -1,8 +1,8 @@
-#Ignore papers and books placed here
-material
-
 #Ignore executables
 bin
 
 #Ignore backup files created by editors
 *~
+
+#Ignore for_record.c
+src/for_report.c

@@ -12,7 +12,7 @@ do
     file_name="$i"
     file_name="${i#src\/}"
     file_name="${file_name%.c}"
-    command="gcc -w -static -ggdb -fno-stack-protector -z execstack -w $i -o bin/$file_name"
+    command="gcc -w -static -ggdb -fno-stack-protector -z execstack $i -o bin/$file_name"
     eval $command
     echo "Created bin/$file_name"
 done

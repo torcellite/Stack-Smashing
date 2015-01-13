@@ -68,6 +68,6 @@ int main() {
 	//ret points to the return address now
 	ret =  (int *)&ret + 4; 
 	//let the return address contain the shellcode's location
-	(*ret) = (int)shellSpawnCode; 
+	(*ret) = (int)helloWorldCode; 
 	return 0;
 }
