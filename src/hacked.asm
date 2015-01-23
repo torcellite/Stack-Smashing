@@ -28,6 +28,6 @@ mystart:
 message: 
 
 	call mystart 		       ; push the address of the string onto the stack
-	db 'Hello, world!' 		   ; message
+	db 'Hacked!' 		       ; message
 
 section .data

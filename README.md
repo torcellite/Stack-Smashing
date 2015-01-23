@@ -8,7 +8,7 @@ Project under [Dr. Bhargav Bellur][1]. The project report can be found [here][2]
 
         https://github.com/torcellite/Stack-Smashing.git
 
-2. Run the setup.sh file to create executable files in the `/bin` folder
+2. Run the setup.sh file to create executable files in the `bin` folder
 
         cd Stack-Smashing # Or whichever folder you've cloned the project into
         ./setup.sh
@@ -27,12 +27,17 @@ where `shell.out` is the executable for spawning a shell, created from `shell.as
 5. After you're done restore ASLR by executing `reset.sh`.
 
         ./reset.sh
+
+6. If you've edited one or many files in the `src` folder and need to rebuild the executables, then run `rebuild.sh` instead of building executables manually.
+
+		./rebuild.sh
         
 # Screenshot
 
 ![screenshot1](screenshots/screenshot1.png)
 ![screenshot2](screenshots/screenshot2.png)
 ![screenshot3](screenshots/screenshot3.png)
+![screenshot4](screenshots/screenshot4.png)
 
 [1]:http://pes.edu/faculty/bhargav-bellur
 [2]:http://torcellite.com/projects/stack-smashing.html

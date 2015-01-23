@@ -6,5 +6,5 @@ _start:
 	xor rax, rax
 	mov al,  0x3c
 	xor rdi, rdi
-	mov dil, 0x0a
+	mov dil, 0x31
 	syscall
