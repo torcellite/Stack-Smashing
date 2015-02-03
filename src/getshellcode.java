@@ -30,12 +30,12 @@ public class getshellcode {
 			if(m.find()) {
 				hex[i] = "\"";
 				hexCode = m.group(1);
-				hexCode = hexCode.substring(hexCode.indexOf(':')+ 1);
+				hexCode = hexCode.substring(hexCode.indexOf(':') + 1);
 				hexCode = hexCode.trim();
 				hexCode = hexCode.replace(" ", "\\x");
 				hexCode = "\\x" + hexCode;
 				hex[i] = hex[i] + hexCode + "\"";
-				hex[i] = hex[i] + "\t//";
+				hex[i] = hex[i] + "\t// ";
 				hex[i] = hex[i] + m.group(2);
 			}
 		}

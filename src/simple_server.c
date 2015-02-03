@@ -56,13 +56,14 @@ void respond(int n) {
 	/**
 	Stack of function
 	----------------------------------------------------------------------------
-	| n   	  | msg 99999 | 
-	| 4 bytes | bytes     |
+	|
+	| 
+	|
 	----------------------------------------------------------------------------
 	**/
 	
-    char msg[99999], *reqline[3], data_to_send[BYTES], path[99999];
     int rcvd, fd, bytes_read;
+    char msg[99999], *reqline[3], data_to_send[BYTES], path[99999];
 
     memset((void*)msg, (int)'\0', sizeof(msg));
 

