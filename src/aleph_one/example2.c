@@ -1,8 +1,6 @@
 /**
 		System information:
-		Architecture: 64-bit Intel i5 M 480
-		$(uname -a): Linux torcellite-vm 3.11.0-26-generic #45-Ubuntu SMP
-					 Tue Jul 15 04:02:06 UTC 2014 x86_64 x86_64 x86_64 GNU/Linux 
+		Architecture: 64-bit
 
 		Note: 
 			Stacks on x86 processors are always fourbyte aligned.

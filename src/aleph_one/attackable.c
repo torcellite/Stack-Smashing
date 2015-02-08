@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
 		// printf("%s\nLength: %d\n", argv[i], strlen(argv[i]));
 	}
 	strcpy(buffer, argv[1]);
-	printf("%x\n", &buffer);
+	printf("Buffer: 0x%x\n", (long int *) buffer);
 	printf("I haven't been hacked yet. Going to exit program normally.\n");
 	return 0;
 }

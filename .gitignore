@@ -1,8 +1,8 @@
 #Ignore executables
 bin
 
-#Ignore backup files created by editors
-*~
-
 #Ignore for_record.c
-src/for_report.c
+src/for_report.cd
+
+#Ignore core dumps
+core
