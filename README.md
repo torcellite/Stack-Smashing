@@ -19,22 +19,22 @@ Project under [Dr. Bhargav Bellur][1]. The project report can be found [here][2]
 
         bin/shellcodetest
 
-4. To create your own program to smash stacks, go through the example programs or check out the project report. You can use `getshellcode.java` to extract the hex values to be used as shellcode.
+5. To create your own program to smash stacks, go through the example programs or check out the project report. You can use `getshellcode.java` to extract the hex values to be used as shellcode.
 
         cd bin
         java getshellcode "$(objdump -d shell.out)"
 
 where `shell.out` is the executable for spawning a shell, created from `shell.asm`.
 
-5. After you're done restore ASLR by executing `reset.sh`.
+6. After you're done restore ASLR by executing `reset.sh`.
 
         ./reset.sh
 
-6. If you've edited one or many files in the `src` folder and need to rebuild the executables, then run `rebuild.sh` instead of building executables manually or executing `setup.sh` again.
+7. If you've edited one or many files in the `src` folder and need to rebuild the executables, then run `rebuild.sh` instead of building executables manually or executing `setup.sh` again.
 
 		./rebuild.sh
 
-7. We have tried to follow the papers being demonstrated as closely as possible.
+8. We have tried to follow the papers being demonstrated as closely as possible.
         
 # Screenshot
 
