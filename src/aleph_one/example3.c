@@ -42,10 +42,11 @@ void function(int a, int b, int c) {
 	(*ret) += 2;
 }
 
-void main() {
+int main(void) {
 	int x;
 	x = 0;
 	function(1, 2, 3);
 	x = 1;
 	printf("%d\n", x);
+	return 0;
 }
