@@ -14,7 +14,7 @@ char large_string[144];
 char *b_ptr;
 int i;
 
-void main() {
+int main(void) {
 	char buffer[96];
 	long int *long_ptr = (long int *) large_string;
 	for (i = 0; i < sizeof(large_string)/8; i++)
@@ -22,14 +22,12 @@ void main() {
 	for (i = 0; i < strlen(shellcode); i++)
 		large_string[i] = shellcode[i];
 	/**
-		Both strcpy and memcpy assume that the strings terminate the moment
-		they encounter a null. The address of large_string is usually 6 bytes,
-		so the two MSB are 0x0 and 0x0 which translates into null in shellcode.
+		strcpy() assumes that the strings terminate the moment they encounter
+		a null. The address of large_string is usually 6 bytes, so the two MSB
+		are 0x0 and 0x0 which translates into null in shellcode.
+		Therefore, memcpy is used instead of strcpy.
 	**/
 	// strcpy(buffer,large_string);
-	// memcpy(buffer, large_string, strlen(large_string));
-	b_ptr = buffer;
-	for (i = 0; i < sizeof(large_string)/sizeof(char); i++) {
-		*(b_ptr++) = large_string[i];
-	}
+	memcpy(buffer, large_string, sizeof(large_string)/sizeof(char));
+	return 0;
 }

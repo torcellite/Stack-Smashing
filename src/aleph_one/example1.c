@@ -37,7 +37,7 @@ void function(int a, int b, int c) {
 	memset(buffer2, 'b', sizeof(buffer2));
 }
 
-int main() {
+int main(void) {
 	function(1, 2, 3);
 	return 0;
 }

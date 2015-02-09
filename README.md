@@ -36,7 +36,7 @@ where `shell.out` is the executable for spawning a shell, created from `shell.as
 
 8. We have tried to follow the papers being demonstrated as closely as possible.
         
-# Screenshot
+# Screenshots
 
 ![screenshot1](screenshots/screenshot1.png)
 ![screenshot2](screenshots/screenshot2.png)

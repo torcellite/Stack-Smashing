@@ -41,7 +41,7 @@ char shellcode[] = "\xeb\x14"			// jmp    400096 <_start+0x16>
 
 int main(int argc, char **argv) {
 	int *ret; 
-	//ret points to the return address now
+	// ret points to the return address now
 	ret =  (int *)&ret + 4;
 	switch (argv[1][0]) {
 		case '1':	
