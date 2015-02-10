@@ -37,9 +37,9 @@ void function(int a, int b, int c) {
 		between the addresses of x = 1; and printf("%d\n", x);,
 		so that it points to printf("%d\n", x); rather than
 		x = 1;
-		The difference is found to be 2
+		Increment the return address so that it skips the assigment x=1;
 	**/
-	(*ret) += 2;
+	(*ret) += 1;
 }
 
 int main(void) {
