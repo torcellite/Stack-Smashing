@@ -33,19 +33,24 @@ void function(int a, int b, int c) {
 	**/
 	ret = buffer1 + 21;
 	/**
-		We now need to increment the return address by the difference
-		between the addresses of x = 1; and printf("%d\n", x);,
-		so that it points to printf("%d\n", x); rather than
-		x = 1;
-		Increment the return address so that it skips the assigment x=1;
+		Increment the return value by the difference between statements' addresses
 	**/
-	(*ret) += 1;
+	// (*ret) += 8; // Flow of control is returned to line 49
+	// (*ret) += 36; // Flow of control is returned to line 51
+    // (*ret) += 64; // Flow of control is returned to line 53
+	(*ret) += 92; // Flow of control is returned to line 55
 }
 
 int main(void) {
 	int x;
 	x = 0;
 	function(1, 2, 3);
+	x = 4;
+	printf("%d\n", x);
+	x = 3;
+	printf("%d\n", x);
+	x = 2;
+	printf("%d\n", x);
 	x = 1;
 	printf("%d\n", x);
 	return 0;
