@@ -15,7 +15,7 @@ char hello_world_code[] =	"\xeb\x1a"	// jmp    40009c <_start+0x1c>
 	"\x40\xb7\x01"						// mov    $0x1,%dil
 	"\x5e"								// pop    %rsi
 	"\x48\x31\xd2"						// xor    %rdx,%rdx
-	"\xb2\x0f"							// mov    $0xf,%dl
+	"\xb2\x0e"							// mov    $0xe,%dl
 	"\x0f\x05"							// syscall 
 	"\x48\x31\xc0"						// xor    %rax,%rax
 	"\xb0\x3c"							// mov    $0x3c,%al
@@ -45,13 +45,13 @@ int main(int argc, char **argv) {
 	ret =  (int *)&ret + 4;
 	switch (argv[1][0]) {
 		case '1':	
-			(*ret) = (int)exit_code; 
+			(*ret) = (int *)exit_code; 
 			break;
 		case '2':
-			(*ret) = (int)hello_world_code;
+			(*ret) = (int *)hello_world_code;
 			break;
 		default:
-			(*ret) = (int)shellcode;
+			(*ret) = (int *)shellcode;
 	}
 	return 0;
 }

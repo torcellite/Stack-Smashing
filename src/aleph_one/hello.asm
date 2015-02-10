@@ -16,7 +16,7 @@ mystart:
 	mov   dil, 0x1	 	   ; stdout
 	pop   rsi		       ; message address
 	xor   rdx, rdx
-	mov   dl, 0xf		   ; message string length
+	mov   dl, 0xd		   ; message string length
 	syscall
 
 	; sys_exit(return_code)
