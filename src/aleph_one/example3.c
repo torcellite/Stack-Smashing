@@ -31,7 +31,12 @@ void function(int a, int b, int c) {
 		so buffer1 + 5 + 3 + 4 + 4 + 8 points to RET
 	**/
 	ret = buffer1 + 24;
-	(*ret) += 7;
+	/**
+		Increment the return value by 1 so that it skips x = 1; and moves to
+		next instruction, the difference between instructions x = 1; and
+		printf("%d\n", x); need not be calculated.
+	**/
+	(*ret) += 1;
 }
 
 int main(void) {
