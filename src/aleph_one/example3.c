@@ -32,17 +32,24 @@ void function(int a, int b, int c) {
 	**/
 	ret = buffer1 + 24;
 	/**
-		Increment the return value by 1 so that it skips x = 1; and moves to
-		next instruction, the difference between instructions x = 1; and
-		printf("%d\n", x); need not be calculated.
+		Increment the return value by the difference between statements' addresses
 	**/
-	(*ret) += 1;
+	// (*ret) += 7; // Flow of control is returned to line 48
+	// (*ret) += 34; // Flow of control is returned to line 50
+    // (*ret) += 61; // Flow of control is returned to line 52
+	(*ret) += 88; // Flow of control is returned to line 54
 }
 
 int main(void) {
 	int x;
 	x = 0;
 	function(1, 2, 3);
+	x = 4;
+	printf("%d\n", x);
+	x = 3;
+	printf("%d\n", x);
+	x = 2;
+	printf("%d\n", x);
 	x = 1;
 	printf("%d\n", x);
 	return 0;
