@@ -33,7 +33,7 @@ char retaddr[] = "\x3c\xcd\xff\xff";
 int main(int argc, char **argv) {
 
     /**
-           buffer (in the vulnerable program) is 80 bytes,
+        buffer (in the vulnerable program) is 80 bytes,
         so the stack looks like this
         ---------------------------------------------------------------------------
         | 80 bytes   | 4 bytes | 8 bytes  | 4 bytes | 4 bytes | 4 bytes | 4 bytes |
