@@ -1,14 +1,14 @@
-#include<stdio.h>
-#include<string.h>
-#include<stdlib.h>
-#include<unistd.h>
-#include<sys/types.h>
-#include<sys/stat.h>
-#include<sys/socket.h>
-#include<arpa/inet.h>
-#include<netdb.h>
-#include<signal.h>
-#include<fcntl.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <signal.h>
+#include <fcntl.h>
 
 #define MAX_CONN 1000
 #define BYTES 1024
@@ -17,7 +17,7 @@ char *ROOT;
 int listenfd, clients[MAX_CONN];
 
 void start_server(char *port) {
-	
+    
     struct addrinfo hints, *res, *p;
 
     // getaddrinfo for host
@@ -29,7 +29,7 @@ void start_server(char *port) {
         perror("getaddrinfo() error");
         exit(1);
     }
-	
+    
     // socket and bind
     for (p = res; p!=NULL; p=p->ai_next) {
         listenfd = socket (p->ai_family, p->ai_socktype, 0);
@@ -53,15 +53,15 @@ void start_server(char *port) {
 // Client connection
 void respond(int n) {
 
-	/**
-	Stack of function
-	----------------------------------------------------------------------------
-	|
-	| 
-	|
-	----------------------------------------------------------------------------
-	**/
-	
+    /**
+    Stack of function
+    ----------------------------------------------------------------------------
+    |
+    | 
+    |
+    ----------------------------------------------------------------------------
+    **/
+    
     int rcvd, fd, bytes_read;
     char msg[99999], *reqline[3], data_to_send[BYTES], path[99999];
 
@@ -70,13 +70,13 @@ void respond(int n) {
     rcvd=recv(clients[n], msg, sizeof(msg), 0);
 
     if (rcvd < 0) {
-		// receive error
+        // receive error
         fprintf(stderr,("recv() error\n"));
-	} else if (rcvd == 0)  {
-		// receive socket closed
+    } else if (rcvd == 0)  {
+        // receive socket closed
         fprintf(stderr,"Client disconnected unexpectedly.\n");
-	} else  {  
-	    // message received
+    } else  {  
+        // message received
         reqline[0] = strtok (msg, " \t\n");
         printf("---START of Message---\n%s\n---END of Message---\n", msg);
         if (strncmp(reqline[0], "GET\0", 4) == 0) {
@@ -94,13 +94,13 @@ void respond(int n) {
                 printf("file: %s\n", path);
 
                 if ((fd=open(path, O_RDONLY)) != -1) { 
-					// File found
+                    // File found
                     send(clients[n], "HTTP/1.0 200 OK\n\n", 17, 0);
                     while ((bytes_read=read(fd, data_to_send, BYTES)) > 0)
                         write(clients[n], data_to_send, bytes_read);
                 } else {
-					write(clients[n], "HTTP/1.0 404 Not Found\n", 23); 
-				}
+                    write(clients[n], "HTTP/1.0 404 Not Found\n", 23); 
+                }
             }
         }
     }
@@ -112,7 +112,7 @@ void respond(int n) {
 }
 
 int main(int argc, char* argv[]) {
-	
+    
     struct sockaddr_in clientaddr;
     socklen_t addrlen;
     char c;    
@@ -143,10 +143,10 @@ int main(int argc, char* argv[]) {
     }
     printf("Server started at port %s%s%s with root directory set to %s%s%s\n", "\033[92m", PORT, "\033[0m", "\033[92m", ROOT, "\033[0m");
     // Setting all elements to -1: signifies there is no client connected
-	int i;
-	for (i = 0; i < MAX_CONN; i++) {
-		clients[i] = -1;
-	}
+    int i;
+    for (i = 0; i < MAX_CONN; i++) {
+        clients[i] = -1;
+    }
     start_server(PORT);
 
     // ACCEPT connections
@@ -156,15 +156,15 @@ int main(int argc, char* argv[]) {
 
         if (clients[slot] < 0) {
             error ("accept() error");
-		} else {
+        } else {
             if (fork() == 0) {
                 respond(slot);
                 exit(0);
             }
         }
-		
+        
         while (clients[slot] != -1) 
-			slot = (slot + 1) % MAX_CONN;
+            slot = (slot + 1) % MAX_CONN;
     }
     return 0;
 }
