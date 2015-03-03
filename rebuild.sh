@@ -21,7 +21,8 @@ if ls src | grep -q "\.c"; then
 		    file_name="$i"
 		    file_name="${i#src\/}"
 		    file_name="${file_name%.c}"
-		    command="gcc -m32 -w -static -ggdb -fno-stack-protector -z execstack $i -o bin/$file_name"
+		    # remove -z execstack and -static to test ROP, use them to test classic stack smashing
+		    command="gcc -m32 -w -ggdb -fno-stack-protector $i -o bin/$file_name"
 			eval "rm -f bin/$file_name"
 		    if eval $command; then
 		    	echo "Created bin/$file_name"
