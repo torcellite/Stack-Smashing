@@ -50,12 +50,13 @@ void start_server(char *port) {
     }
 }
 
+int client_no;
+
 // Client connection
 void respond(int n) {
 
     /**
         Stack of function
-        The stack was constructed using GDB and "stack_decipher.c"
         ----------------------------------------------------------------------------------------------------------------------------
         | path      | data_to_send | reqline  | msg       | bytes_read | fd      | rcvd    | Slack   | EBP     | RET     | n       |
         | 128 bytes | 1024 bytes   | 12 bytes | 128 bytes | 4 bytes    | 4 bytes | 4 bytes | 8 bytes | 4 bytes | 4 bytes | 4 bytes |
@@ -63,11 +64,16 @@ void respond(int n) {
     **/
     
     int rcvd, fd, bytes_read;
+    // This is done because n will be corrupted due to the buffer overflow
+    // Following uses of n in the function will lead to a segfault
+    // Using a global variable keeps it off the stack and a valid value of the index is maintained.
+    client_no = n;
     char msg[128], *reqline[3], data_to_send[BYTES], path[128];
 
-    memset((void*)msg, (int)'\0', sizeof(msg));
+    memset((void *)msg, (int)'\0', sizeof(msg));
 
-    rcvd = recv(clients[n], msg, sizeof(msg), 0);
+    // introducing vulnerability for demonstration purposes
+    rcvd = recv(clients[client_no], msg, 2048, 0);
 
     if (rcvd < 0) {
         // receive error
@@ -77,39 +83,48 @@ void respond(int n) {
         fprintf(stderr, "Client disconnected unexpectedly.\n");
     } else  {  
         // message received
+        /*printf("rcvd: %d\n", rcvd);
+        printf("\n----START----\n");
+        int i = 0;
+        for (i = 0; i < 2048; i++)
+            printf("%c", msg[i]);
+        printf("\n-----END-----\n");*/
         reqline[0] = strtok(msg, " \t\n");
+        // printf("reqline[0]: %s\n", reqline[0]);
         if (strncmp(reqline[0], "GET\0", 4) == 0) {
             reqline[1] = strtok (NULL, " \t");
-            printf("reqline[1]: %s", reqline[1]);
+            // printf("reqline[1]: %s\n", reqline[1]);
             reqline[2] = strtok (NULL, " \t\n");
-            printf("reqline[2]: %s", reqline[2]);
+            // printf("reqline[2]: %s\n", reqline[2]);
             if (strncmp(reqline[2], "HTTP/1.0", 8) != 0 && strncmp(reqline[2], "HTTP/1.1", 8) != 0) {
-                write(clients[n], "HTTP/1.0 400 Bad Request\n", 25);
-            }
-            else {
+                write(clients[client_no], "HTTP/1.0 400 Bad Request\n\n", 28);
+            } else {
+                // printf("Reached else block\n");
                 if (strncmp(reqline[1], "/\0", 2) == 0)
                     reqline[1] = "/index.html";        // Default page: /index.html
-
+                // printf("reqline[1]: %s\n", reqline[1]);
                 strcpy(path, ROOT);
                 strcpy(&path[strlen(ROOT)], reqline[1]);
-                long *ptr = path + 3108;
-                printf("%010p: %010p", ptr, *ptr);
+                // printf("path: %s\n", path);
                 if ((fd = open(path, O_RDONLY)) != -1) { 
                     // File found
-                    send(clients[n], "HTTP/1.0 200 OK\n\n", 17, 0);
-                    while ((bytes_read=read(fd, data_to_send, BYTES)) > 0)
-                        write(clients[n], data_to_send, bytes_read);
+                    printf("Client %d: HTTP/1.0 200 OK\n", client_no);
+                    send(clients[client_no], "HTTP/1.0 200 OK\n\n", 18, 0);
+                    if ((bytes_read = read(fd, data_to_send, BYTES)) > 0) {
+                        write(clients[client_no], data_to_send, bytes_read);
+                    }
                 } else {
-                    write(clients[n], "HTTP/1.0 404 Not Found\n", 24); 
+                    printf("Client %d: HTTP/1.0 404 Not Found\n", client_no);
+                    write(clients[client_no], "HTTP/1.0 404 Not Found\n\n", 26); 
                 }
             }
         }
     }
 
     // Close Socket
-    shutdown(clients[n], SHUT_RDWR); 
-    close(clients[n]);
-    clients[n] = -1;
+    shutdown(clients[client_no], SHUT_RDWR); 
+    close(clients[client_no]);
+    clients[client_no] = -1;
 }
 
 int main(int argc, char* argv[]) {

