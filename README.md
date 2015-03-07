@@ -19,12 +19,11 @@ Project under [Dr. Bhargav Bellur][1]. The project report can be found [here][2]
 
         bin/shellcodetest
 
-5. To create your own program to smash stacks, go through the example programs or check out the project report. You can use `getshellcode.java` to extract the hex values to be used as shellcode.
+5. To create your own program to smash stacks, go through the example programs or check out the project report. You can use `getshellcode.py` to extract the hex values to be used as shellcode.
 
-        cd bin
-        java getshellcode "$(objdump -d shell.out)"
+        python src/getshellcode.py "$(objdump -d bin/aleph_one/exit.out)"
 
-where `shell.out` is the executable for spawning a shell, created from `shell.asm`.
+where `exit.out` is the executable for the `exit()` function, created from `exit.asm`.
 
 6. After you're done restore ASLR by executing `reset.sh`.
 
