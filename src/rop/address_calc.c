@@ -5,23 +5,27 @@
 
 int main(int argc, char **argv) {
 
-  long base;
-  long limit;
+  long libc_base;
+  long data_base;
   int commands_length;
 
-  // argv[1]: base
-  // argv[2]: limit
-  // argv[2]: commands_length
-  // argv[3]: system nickname
+  char system_nick[128];
+  char buffer[128];
 
-  if (argc < 4) {
-      printf("Base address, limit address, number of commands and system nickname need to be entered.\n");
-      exit(1);
-  }
+  printf("\nEnter system nickname: ");
+  fgets(system_nick, sizeof(system_nick), stdin);
 
-  sscanf(argv[1], "%x", &base);
-  sscanf(argv[2], "%x", &limit);
-  commands_length = atoi(argv[3]);
+  printf("Enter libc base address: ");
+  fgets(buffer, sizeof(buffer), stdin);
+  sscanf(buffer, "%x", &libc_base);
+
+  printf("Enter .data base address: ");
+  fgets(buffer, sizeof(buffer), stdin);
+  sscanf(buffer, "%x", &data_base);
+
+  printf("Enter the total number of commands (includes data, padding and addresses): ");
+  scanf("%d", &commands_length);
+  getchar();
 
   int i;
 
@@ -30,18 +34,33 @@ int main(int argc, char **argv) {
   long offset[commands_length];
   long address[commands_length];
 
-  char string[11]; // example 0xdeadbeef - 10 characters + 1 null
+  int type[commands_length];
 
-  for (i = 0; i < commands_length; i++) {
-      printf("Enter offset for command[%d]: ", i+1);
-      scanf("%s", string);
+  char *string;
+
+  i = 0;
+  do {
+      printf("Enter type (1 - command, 2 - address, 3 - data or padding) and offset of command[%d]: ", i + 1);
+      fgets(buffer, sizeof(buffer), stdin);
+      type[i] = atoi(strtok(buffer, " "));
+      string = strtok(NULL, " ");
       sscanf(string, "%x", &offset[i]);
-      address[i] = base + offset[i];
-      printf("Base\t\tOffset\t\tAddress\n");      
-      printf("%010p\t%010p\t%010p\n", base, offset[i], address[i]);
-      if (address[i] > limit)
-        printf("%010p exceeds limit %010p by %010p\n", address[i], limit, address[i] - limit);
-  }
+      printf("Base\t\tOffset\t\tAddress\n");
+      switch (type[i]) {
+        case 1:
+          address[i] = libc_base + offset[i];
+          printf("%010p\t%010p\t%010p\n", libc_base, offset[i], address[i]);
+          break;
+        case 2:
+          address[i] = data_base + offset[i];
+          printf("%010p\t%010p\t%010p\n", data_base, offset[i], address[i]);
+          break;
+        default:
+          address[i] = offset[i];
+          printf("%010p\t%010p\t%010p\n", 0, offset[i], address[i]);
+      }
+      i++;
+  } while (i < commands_length);
 
   fprintf(fp, "\n\n----START----\n\n");
   fprintf(fp, "System: %s\n\n", argv[3]);
@@ -49,8 +68,18 @@ int main(int argc, char **argv) {
   fprintf(fp, "Time: %s\n\n", ctime(&raw_time));
   fprintf(fp, "Base\t\tOffset\t\tAddress\n");
   for (i = 0; i < commands_length; i++) {
-      fprintf(fp, "%010p\t%010p\t%010p\n", base, offset[i], address[i]);
+    switch(type[i]) {
+      case 1:
+        fprintf(fp, "%010p\t%010p\t%010p\n", libc_base, offset[i], address[i]);
+        break;
+      case 2:
+        fprintf(fp, "%010p\t%010p\t%010p\n", data_base, offset[i], address[i]);
+        break;
+      default:
+        fprintf(fp, "%010p\t%010p\t%010p\n", 0, 0, address[i]);
+    }
   }
+
   fprintf(fp, "\n\n-----END-----\n\n");
 
   fclose(fp);
@@ -61,6 +90,7 @@ int main(int argc, char **argv) {
   fclose(fp);
 
   printf("Log saved - Check rop_address.txt\n");
+  printf("current_address_space.txt is ready to be used for ROP shellcode creation.\n");
 
   return 0;
 }
