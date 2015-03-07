@@ -6,12 +6,6 @@ eval "rm -rf bin/"
 
 eval "mkdir bin/"
 
-if eval "javac src/getshellcode.java -d bin/"; then
-	echo "Created bin/getshellcode.class"
-else
-	echo "Failed to create bin/getshellcode.class"
-fi
-
 if ls src | grep -q "\.c"; then
 	for i in src/*.c
 	do
