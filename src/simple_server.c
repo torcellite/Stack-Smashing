@@ -97,7 +97,7 @@ void respond(int n) {
             reqline[2] = strtok (NULL, " \t\n");
             // printf("reqline[2]: %s\n", reqline[2]);
             if (strncmp(reqline[2], "HTTP/1.0", 8) != 0 && strncmp(reqline[2], "HTTP/1.1", 8) != 0) {
-                write(clients[client_no], "HTTP/1.0 400 Bad Request\n\n", 28);
+                send(clients[client_no], "HTTP/1.0 400 Bad Request\n", 25, 0);
             } else {
                 // printf("Reached else block\n");
                 if (strncmp(reqline[1], "/\0", 2) == 0)
@@ -109,13 +109,12 @@ void respond(int n) {
                 if ((fd = open(path, O_RDONLY)) != -1) { 
                     // File found
                     printf("Client %d: HTTP/1.0 200 OK\n", client_no);
-                    send(clients[client_no], "HTTP/1.0 200 OK\n\n", 18, 0);
                     if ((bytes_read = read(fd, data_to_send, BYTES)) > 0) {
                         write(clients[client_no], data_to_send, bytes_read);
                     }
                 } else {
                     printf("Client %d: HTTP/1.0 404 Not Found\n", client_no);
-                    write(clients[client_no], "HTTP/1.0 404 Not Found\n\n", 26); 
+                    write(clients[client_no], "HTTP/1.0 404 Not Found\n", 23); 
                 }
             }
         }

