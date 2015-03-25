@@ -75,7 +75,6 @@ int main(int argc, char **argv) {
     printf("Buffer: %s\n", buffer);
 
     putenv(buffer);
-
     system("/bin/sh");
 
     return 0;

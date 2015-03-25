@@ -50,7 +50,7 @@ void start_server(char *port) {
     }
 }
 
-int client_no;
+int client_no, i;
 
 // Client connection
 void respond(int n) {
@@ -101,13 +101,14 @@ void respond(int n) {
             } else {
                 // printf("Reached else block\n");
                 if (strncmp(reqline[1], "/\0", 2) == 0)
-                    reqline[1] = "/index.html";        // Default page: /index.html
+                    reqline[1] = "/page.htm";        // Default page: /page.htm
                 // printf("reqline[1]: %s\n", reqline[1]);
                 strcpy(path, ROOT);
                 strcpy(&path[strlen(ROOT)], reqline[1]);
                 // printf("path: %s\n", path);
                 if ((fd = open(path, O_RDONLY)) != -1) { 
                     // File found
+                    // send(clients[client_no], "HTTP/1.0 200 OK\n", 16, 0);
                     printf("Client %d: HTTP/1.0 200 OK\n", client_no);
                     if ((bytes_read = read(fd, data_to_send, BYTES)) > 0) {
                         write(clients[client_no], data_to_send, bytes_read);
@@ -172,10 +173,10 @@ int main(int argc, char* argv[]) {
         if (clients[slot] < 0) {
             error ("accept() error");
         } else {
-            if (fork() == 0) {
+          // if (fork() == 0) {
                 respond(slot);
-                exit(0);
-            }
+          //      exit(0);
+          // }
         }
         
         while (clients[slot] != -1) 
