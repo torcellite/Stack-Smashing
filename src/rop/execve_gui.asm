@@ -8,7 +8,6 @@ _start:
     mov     edx, envp   ; third parameter - envp
     mov     ebx, path   ; first parameter - path
     mov     ecx, argv   ; second parameter - argp
-    xor     eax, eax    ; clear RAX
     mov     al, 0xb     ; syscall number for __execve
     int     0x80        ; trap into kernel
     

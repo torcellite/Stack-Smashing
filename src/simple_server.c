@@ -173,10 +173,10 @@ int main(int argc, char* argv[]) {
         if (clients[slot] < 0) {
             error ("accept() error");
         } else {
-          // if (fork() == 0) {
+            if (fork() == 0) {
                 respond(slot);
-          //      exit(0);
-          // }
+                exit(0);
+            }
         }
         
         while (clients[slot] != -1) 

