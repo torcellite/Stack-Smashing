@@ -101,7 +101,7 @@ void respond(int n) {
             } else {
                 // printf("Reached else block\n");
                 if (strncmp(reqline[1], "/\0", 2) == 0)
-                    reqline[1] = "/page.htm";        // Default page: /page.htm
+                    reqline[1] = "/index.php";        // Default page: /index.php
                 // printf("reqline[1]: %s\n", reqline[1]);
                 strcpy(path, ROOT);
                 strcpy(&path[strlen(ROOT)], reqline[1]);

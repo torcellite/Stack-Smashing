@@ -60,7 +60,7 @@ _start:
 
 section .data
 
-    filename db 'index.html', 0x0
+    filename db 'index.php', 0x0
     message db 'Hacked!', 0xd, 0xa
     m_len equ $-message
 
