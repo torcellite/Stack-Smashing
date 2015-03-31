@@ -1,7 +1,6 @@
 import os
 import sys
 import json
-import pprint
 import subprocess
 
 class GenerateROPShellcode(object):
@@ -20,8 +19,6 @@ class GenerateROPShellcode(object):
         self.addresses = []
         self.shellcode = ''
         self.print_code = print_code
-
-        self.pp = pprint.PrettyPrinter(indent=4)
 
     def get_code(self):
         with open(self.json_file) as json_file:
@@ -113,7 +110,7 @@ def main():
         generator = GenerateROPShellcode(padding=int(sys.argv[1]),_id=int(sys.argv[2]), json_file=sys.argv[3])
         generator.get_code()
     else:
-        generator = GenerateROPShellcode(padding=int(sys.argv[1]),_id=int(sys.argv[2]), json_file=sys.argv[3], print_code=(sys.argv[4]=='print'))
+        generator = GenerateROPShellcode(padding=int(sys.argv[1]),_id=int(sys.argv[2]), json_file=sys.argv[3], print_code=(sys.argv[4] == 'print'))
         generator.get_code()
 
 if __name__ == '__main__':
