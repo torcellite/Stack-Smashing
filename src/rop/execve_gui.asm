@@ -13,7 +13,7 @@ _start:
     
 section .data
     
-    path db '/usr/bin/abiword', 0x0
+    path db '/usr/bin/xterm', 0x0
     argv dd path, 0x0
     disp db 'DISPLAY=:0.0', 0x0
     envp dd disp, 0x0

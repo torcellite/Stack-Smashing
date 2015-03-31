@@ -87,8 +87,7 @@ int main(int argc, char *argv[]) {
     n = write(sockfd, buffer, i);
     printf("Write status: %d\n", n);
     if (n < 0) {
-        printf("Write error.\n");
-        exit(1);
+        printf("Write error.\n");        exit(1);
     }
 
     printf("Awaiting response from server..\n");
