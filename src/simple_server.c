@@ -81,41 +81,28 @@ void respond(int n) {
     } else if (rcvd == 0)  {
         // receive socket closed
         fprintf(stderr, "Client disconnected unexpectedly.\n");
-    } else  {  
-        // message received
-        /*printf("rcvd: %d\n", rcvd);
-        printf("\n----START----\n");
-        int i = 0;
-        for (i = 0; i < 2048; i++)
-            printf("%c", msg[i]);
-        printf("\n-----END-----\n");*/
+    } else  {
         reqline[0] = strtok(msg, " \t\n");
-        // printf("reqline[0]: %s\n", reqline[0]);
         if (strncmp(reqline[0], "GET\0", 4) == 0) {
             reqline[1] = strtok (NULL, " \t");
-            // printf("reqline[1]: %s\n", reqline[1]);
             reqline[2] = strtok (NULL, " \t\n");
-            // printf("reqline[2]: %s\n", reqline[2]);
             if (strncmp(reqline[2], "HTTP/1.0", 8) != 0 && strncmp(reqline[2], "HTTP/1.1", 8) != 0) {
-                send(clients[client_no], "HTTP/1.0 400 Bad Request\n", 25, 0);
+                send(clients[client_no], "HTTP/1.1 400 Bad Request\n", 25, 0);
             } else {
                 // printf("Reached else block\n");
                 if (strncmp(reqline[1], "/\0", 2) == 0)
                     reqline[1] = "/index.php";        // Default page: /index.php
-                // printf("reqline[1]: %s\n", reqline[1]);
                 strcpy(path, ROOT);
                 strcpy(&path[strlen(ROOT)], reqline[1]);
-                // printf("path: %s\n", path);
                 if ((fd = open(path, O_RDONLY)) != -1) { 
                     // File found
-                    // send(clients[client_no], "HTTP/1.0 200 OK\n", 16, 0);
-                    printf("Client %d: HTTP/1.0 200 OK\n", client_no);
+                    printf("Client %d: HTTP/1.1 200 OK\n", client_no);
                     if ((bytes_read = read(fd, data_to_send, BYTES)) > 0) {
                         write(clients[client_no], data_to_send, bytes_read);
                     }
                 } else {
-                    printf("Client %d: HTTP/1.0 404 Not Found\n", client_no);
-                    write(clients[client_no], "HTTP/1.0 404 Not Found\n", 23); 
+                    printf("Client %d: HTTP/1.1 404 Not Found\n", client_no);
+                    write(clients[client_no], "HTTP/1.1 404 Not Found\n", 23); 
                 }
             }
         }
@@ -141,7 +128,7 @@ int main(int argc, char* argv[]) {
     int slot = 0;
 
     // Parsing the command line arguments
-    while ((c = getopt (argc, argv, "p:r:")) != -1) {
+    while ((c = getopt(argc, argv, "p:r:")) != -1) {
         switch (c) {
             case 'r':
                 ROOT = malloc(strlen(optarg));
