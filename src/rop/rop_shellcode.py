@@ -1,7 +1,6 @@
 import os
 import sys
 import json
-import shlex
 import subprocess
 
 class GenerateROPShellcode(object):
@@ -10,7 +9,7 @@ class GenerateROPShellcode(object):
     id: The id of the ROP code that needs to be converted to shellcode
     json_file: JSON file 
     """
-    def __init__(self, padding, _id, json_file, print_code=False):
+    def __init__(self, padding, _id, json_file, print_code=False, file_name=None, line_num=-1):
         self._id = _id
         self.code = ''
         self.padding = padding
@@ -20,6 +19,8 @@ class GenerateROPShellcode(object):
         self.addresses = []
         self.shellcode = ''
         self.print_code = print_code
+        self.file_name = None
+        self.line_num = -1
 
     def get_code(self):
         with open(self.json_file) as json_file:
@@ -53,20 +54,22 @@ class GenerateROPShellcode(object):
             self.shellcode += (address[2:].replace('L', '').zfill(8).decode('hex'))[::-1]
 
         if self.print_code:
-            output_file = input('To which file would you like to write the shellcode? ')
-            fo = open(output_file, 'r')
+            if self.file_name is None:
+                self.file_name = input('To which file would you like to write the shellcode? ')
+            fo = open(self.file_name, 'r')
             contents = fo.readlines()
             fo.close()
-            fo = open(output_file, 'w+')
+            fo = open(self.file_name, 'w+')
             shellcode = 'const char default_shellcode[] = "'
             for item in list(self.shellcode):
                 shellcode += ('\\x' + item.encode('hex'))
             shellcode += '";\n'
-            line_num = input('At which line would you like to insert the shellcode? ')
-            if ('default_shellcode' in contents[line_num - 1]):
-                contents[line_num - 1] = shellcode
+            if self.line_num == -1:
+                self.line_num = input('At which line would you like to insert the shellcode? ')
+            if ('default_shellcode' in contents[self.line_num - 1]):
+                contents[self.line_num - 1] = shellcode
             else:
-                contents.insert(line_num, shellcode)
+                contents.insert(self.line_num, shellcode)
             contents = ''.join(contents)
             fo.write(contents)
             fo.close()

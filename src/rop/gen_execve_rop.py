@@ -147,7 +147,7 @@ def main():
     generator.libc_base = hex(int(str(raw_input('Enter the libc base (format - 0xdeadbeef): ')).replace('L', ''), 16))
     generator.data_base = hex(int(str(raw_input('Enter the data base (format - 0xdeadbeef): ')).replace('L', ''), 16))
     generator.padding = int(raw_input('Padding: '))
-    generator.print_code = str(raw_input('Would you like to write the code into a file (y/n)? ')) == 'yes'
+    generator.print_code = str(raw_input('Would you like to write the code into a file (y/n)? ')) == 'y'
     generator.construct_shellcode()
 
 if __name__ == '__main__':
