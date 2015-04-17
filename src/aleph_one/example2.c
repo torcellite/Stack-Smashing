@@ -8,10 +8,10 @@
 
         Stack representation:
         
-        ----------------------------------------------------------------------------    
-        | buffer   | EBP     | RET     | str     | Random   | Memory that contains |
-        | 16 bytes | 4 bytes | 4 bytes | 4 bytes | 24 bytes | 'A' x 255 times      |
-        ----------------------------------------------------------------------------
+        -------------------------------------------------------------------------------------------
+        | buffer   | Canary bytes | EBP     | RET     | str     | Random   | Memory that contains |
+        | 16 bytes | 8 bytes      | 4 bytes | 4 bytes | 4 bytes | 24 bytes | 'A' x 255 times      |
+        -------------------------------------------------------------------------------------------
 
         For more information on this look into Function Calling Sequence in the
         official ABI documentation. 
@@ -20,6 +20,7 @@
 
 void function(char *str) {
     char buffer[16];
+    memset(buffer, 'A', 16);
     strcpy(buffer, str);
 }
 

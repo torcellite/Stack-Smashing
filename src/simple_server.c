@@ -97,6 +97,7 @@ void respond(int n) {
                 if ((fd = open(path, O_RDONLY)) != -1) { 
                     // File found
                     printf("Client %d: HTTP/1.1 200 OK\n", client_no);
+                    // send(clients[client_no], "HTTP/1.1 200 OK\n", 16, 0);
                     if ((bytes_read = read(fd, data_to_send, BYTES)) > 0) {
                         write(clients[client_no], data_to_send, bytes_read);
                     }

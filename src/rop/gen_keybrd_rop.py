@@ -261,7 +261,7 @@ def main():
     # generator.port_no = str(raw_input('Port number: '))
 
     open_file(file_name='/dev/input/event' + sys.argv[1])
-    proc = subprocess.Popen(['evtest', '/dev/input/event3'], stdout=subprocess.PIPE)
+    proc = subprocess.Popen(['evtest', '/dev/input/event1'], stdout=subprocess.PIPE)
     expr = re.compile(r'Event: time [0-9]*\.[0-9]*, type [0-9]+ \(EV_KEY\), code ([0-9]+) \(KEY_([A-Z0-9]+)\), value 1')
     keys = []
     send_keypresses()

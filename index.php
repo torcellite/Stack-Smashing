@@ -1,1 +1,1 @@
-<html>HooHaa!</html>
+This is just a test page, what did you expect?
