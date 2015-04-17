@@ -21,6 +21,7 @@ class GenerateROPShellcode(object):
         self.print_code = print_code
         self.file_name = None
         self.line_num = -1
+        self.FNULL = open(os.devnull, 'w')
 
     def get_code(self):
         with open(self.json_file) as json_file:
@@ -73,7 +74,7 @@ class GenerateROPShellcode(object):
             contents = ''.join(contents)
             fo.write(contents)
             fo.close()
-            subprocess.call('./rebuild.sh', shell=False)
+            subprocess.call('./rebuild.sh', shell=False, stdout=self.FNULL)
         else:
             os.putenv('EGG', self.shellcode)
             subprocess.call('/bin/bash', shell=True)
