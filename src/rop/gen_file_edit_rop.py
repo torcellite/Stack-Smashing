@@ -138,7 +138,7 @@ def main():
         print 'Please enter the file to be edited and the file whose contents need to be read.'
         sys.exit(1)
 
-    g.init(len(sys.argv)-1)
+    g.init(sys.argv[len(sys.argv)-1])
  
     open_file(sys.argv[1])
     write_file(sys.argv[2])

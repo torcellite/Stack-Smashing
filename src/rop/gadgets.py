@@ -1,5 +1,3 @@
-import sys
-
 """
 This is to store the gadgets that have been found.
 
@@ -58,7 +56,9 @@ def init(name=None):
     global add_eax_0x30
     global call_gs_10
 
-    if sys.argv[1] == 'ubuntu12.04-libc2.15':
+    print name
+
+    if name == 'ubuntu12.04-libc2.15':
         mov_edx_eax = 'ROP command: 0x8d5e4L: mov [edx] eax ; mov eax edx ;;\\n'
         pop_ecx_pop_ebx = 'ROP command: 0xfca82L: pop ecx ; pop ebx ;;\\n'
         add_eax_b = 'ROP command: 0x148428L: add eax 0xb ;;\\n'
@@ -85,7 +85,7 @@ def init(name=None):
         add_eax_0x30 = 'ROP command: 0x84802L: add eax 0x30 ; pop edi ; pop esi ;;\\n'
         call_gs_10 = 'ROP command: 0xb8da5L: call dword [gs:0x10] ;;\\n'
 
-    elif sys.argv[1] == 'ubuntu12.10-libc2.15':
+    elif name == 'ubuntu12.10-libc2.15':
         pop_ecx_pop_eax = 'ROP command: 0xf2c81L: pop ecx ; pop eax ;;\\n'
         mov_eax_ecx = 'ROP command: 0x2d71fL: mov [eax] ecx ;;\\n'
         xor_eax_eax = 'ROP command: 0x32eb0L: xor eax eax ;;\\n'

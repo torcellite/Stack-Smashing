@@ -84,7 +84,7 @@ def main():
         print 'Enter the path of the executable and if it\'s a GUI(1) or command line(2) application'
         sys.exit(1)
 
-    g.init(len(sys.argv)-1)
+    g.init(sys.argv[len(sys.argv)-1])
 
     if int(sys.argv[2]) == 1:
         rop_code = gui_execve(sys.argv[1])

@@ -160,7 +160,7 @@ def main():
         tokens = line.split(' ')
         mapping[tokens[3][5:-2]] = tokens[2]
 
-    g.init(len(sys.argv)-1)
+    g.init(sys.argv[len(sys.argv)-1])
 
     # Hard-coded values
     generator.libc_base = '0xb7e17000'
