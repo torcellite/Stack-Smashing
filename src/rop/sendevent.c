@@ -1,3 +1,8 @@
+/**
+    Borrowed and edited from Android source code.
+    Original source: https://github.com/android/platform_system_core/blob/master/toolbox/sendevent.c
+**/
+
 #include <errno.h>
 #include <fcntl.h>
 #include <linux/input.h>
@@ -9,11 +14,15 @@
 #include <unistd.h>
 
 /**
+    SuperUser permission required.
+
     Example usage:
-        #!/bin/bash
-        
-        bin/rop/sendevent 1 1 31 1
-        bin/rop/sendevent 1 1 31 0
+        sudo bin/rop/sendevent 1 1 31 1 && sudo bin/rop/sendevent 1 1 31 0
+
+        The first 1 is the event number for the keyboard.
+
+        You can find your keyboard's event number using 
+            cat /proc/bus/input/devices
 
     This presses the S key.
 
@@ -22,11 +31,21 @@
     The program will work only when it is executed as superuser.
 **/
 
+/**
+    input_event
+    ------------------------------------------------
+    | timeval time - | type -  | code -  | value - |
+    | time 8 bytes   | 2 bytes | 2 bytes | 2 bytes |
+    ------------------------------------------------
+**/
+
 int main(int argc, char *argv[]) {
+
     int fd;
     ssize_t ret;
     int version;
     struct input_event event;
+
     char event_file[20] = "/dev/input/event";
 
     if(argc != 5) {
@@ -60,6 +79,6 @@ int main(int argc, char *argv[]) {
     }
 
     close(fd);
-    exit(0);
+
     return 0;
 }

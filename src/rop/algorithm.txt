@@ -1,16 +1,23 @@
+**THIS FILE IS ONLY FOR REFERENCE**
+
 Algorithm to perform ROP:
 
 Note: ROP will not work if the -static flag is used while compiling the vulnerable programs.
 
--static flag: On systems that support dynamic linking, this prevents linking with the shared libraries. On other systems, this option has no effect. 
+-static flag: On systems that support dynamic linking, this prevents linking the shared libraries with the executables. On other systems, this option has no effect. 
+
 https://gcc.gnu.org/onlinedocs/gcc/Link-Options.html#Link-Options
+
+"cat /proc/pid/maps" will not yield the location of libc in the memory if -static is used.
+
+http://stackoverflow.com/questions/5130654/when-how-does-linux-load-shared-libraries-into-address-space
 
 1. Find the base address of .data section
     
     Use the following commands
         gdb bin/rop/exploitable
         break main
-        run aaa
+        run
         info files
 
 2. Commands needed to spawn a shell (the data segment addresses are for bin/rop/exploitable)

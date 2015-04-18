@@ -4,7 +4,7 @@ section .text
 
 _start:
 
-    xor     eax, eax    ; make eax - NULL
+    xor     eax, eax    ; clear eax
     mov     edx, envp   ; third parameter - envp
     mov     ebx, path   ; first parameter - path
     mov     ecx, argv   ; second parameter - argp
