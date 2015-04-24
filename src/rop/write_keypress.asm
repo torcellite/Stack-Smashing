@@ -34,6 +34,7 @@ _start:
   
     xor     eax, eax        ; clear eax
     mov     al, 0x1         ; sys_exit
+    mov     ebx, 0x1f       ; exit code
     int     0x80            ; trap into the kernel
 
 section .data
@@ -42,7 +43,7 @@ section .data
     type_ db 1, 0x0
     code  db 31, 0x0
     value db 1, 0x0, 0x0, 0x0
-    struct equ type_-8                   ; Structure alignment is below
+    struct equ type-8                   ; Structure alignment is below
 
     ; struct input_event diagram
 

