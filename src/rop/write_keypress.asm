@@ -43,7 +43,7 @@ section .data
     type_ db 1, 0x0
     code  db 31, 0x0
     value db 1, 0x0, 0x0, 0x0
-    struct equ type-8                   ; Structure alignment is below
+    struct equ type_-8                   ; Structure alignment is below
 
     ; struct input_event diagram
 

